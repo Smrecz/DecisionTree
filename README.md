@@ -11,6 +11,7 @@ You can use on-line tools like for example: http://www.webgraphviz.com/
 
 # Examples
 Check out [ProjectDecisionTree.cs](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/Tree/ProjectDecisionTree.cs) as an example of defined decision tree.
+Check out [DecisionTreeTest.cs](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/DecisionTreeTest.cs) for tree usage.
 
 Below is a graph from generated DOT definition:
 
