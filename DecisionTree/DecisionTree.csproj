@@ -1,7 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Title>DecisionTree</Title>
+    <Authors>Piotr Smreczynski</Authors>
+    <PackageTags>DecisionTree; Graphviz</PackageTags>
+    <PackageId>DecisionTree_Smrecz</PackageId>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/Smrecz/DecisionTree</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Smrecz/DecisionTree</PackageProjectUrl>
+    <Copyright>Piotr Smreczynski</Copyright>
+    <Description>Lightweight framework to define decision trees via configuration with option to get decision tree graph definition in DOT language.</Description>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
