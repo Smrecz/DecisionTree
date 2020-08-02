@@ -11,19 +11,19 @@ namespace DecisionTree.Tests
         private static readonly DecisionResult<BoolDto> TrueResult = 
             new DecisionResultBuilder<BoolDto>()
             .AddTitle("True result")
-            .AddAction(x => x.Result = true)
+            .AddAction(boolDto => boolDto.Result = true)
             .Build();
 
         private static readonly DecisionResult<BoolDto> FalseResult =
             new DecisionResultBuilder<BoolDto>()
             .AddTitle("False result")
-            .AddAction(x => x.Result = false)
+            .AddAction(boolDto => boolDto.Result = false)
             .Build();
 
         private static readonly DecisionResult<BoolDto> DefaultResult =
             new DecisionResultBuilder<BoolDto>()
             .AddTitle("False result")
-            .AddAction(x => x.Result = false)
+            .AddAction(boolDto => boolDto.Result = false)
             .Build();
 
 
@@ -50,7 +50,7 @@ namespace DecisionTree.Tests
             var decisionNode = new DecisionNodeBuilder<BoolDto, bool>()
                 .AddPath(true, TrueResult)
                 .AddPath(false, FalseResult)
-                .AddCondition(x => x.BoolProperty)
+                .AddCondition(boolDto => boolDto.BoolProperty)
                 .Build();
 
             //Act
@@ -72,7 +72,7 @@ namespace DecisionTree.Tests
             var decisionNode = new DecisionNodeBuilder<BoolDto, bool>()
                 .AddPath(true, TrueResult)
                 .AddDefault(DefaultResult)
-                .AddCondition(x => x.BoolProperty)
+                .AddCondition(boolDto => boolDto.BoolProperty)
                 .Build();
 
             //Act
@@ -93,7 +93,7 @@ namespace DecisionTree.Tests
 
             var decisionNode = new DecisionNodeBuilder<BoolDto, bool>()
                 .AddPath(true, TrueResult)
-                .AddCondition(x => x.BoolProperty)
+                .AddCondition(boolDto => boolDto.BoolProperty)
                 .Build();
 
             //Act
@@ -125,7 +125,7 @@ namespace DecisionTree.Tests
 
             //Act
             static void BuildAction() => new DecisionNodeBuilder<BoolDto, bool>()
-                .AddCondition(x => x.BoolProperty)
+                .AddCondition(boolDto => boolDto.BoolProperty)
                 .Build();
 
             //Assert
