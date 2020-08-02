@@ -11,6 +11,7 @@ There are many on-line look like for example: http://www.webgraphviz.com/
 
 # Examples
 Check out [ProjectDecisionTree.cs](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/Tree/ProjectDecisionTree.cs) as an example of defined decision tree.
+![ProjectDecisionTree Graph](https://github.com/Smrecz/DecisionTree/blob/master/ProjectDecisionTree.png)
 
 # TODO
 More documentation...
