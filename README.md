@@ -13,6 +13,7 @@ There are many on-line look like for example: http://www.webgraphviz.com/
 Check out [ProjectDecisionTree.cs](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/Tree/ProjectDecisionTree.cs) as an example of defined decision tree.
 
 Here is a graph from generated DOT definition:
+
 ![ProjectDecisionTree Graph](https://github.com/Smrecz/DecisionTree/blob/master/ProjectDecisionTree.png)
 
 # TODO
