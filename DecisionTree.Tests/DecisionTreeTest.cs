@@ -1,10 +1,10 @@
 ﻿using DecisionTree.Tests.Dto;
 using DecisionTree.Tests.Tree;
-using DecisionTree.DotTreeExtensions.TreeExtensions;
 using Xunit;
 using System;
 using DecisionTree.Tests.Model;
 using System.Collections.Generic;
+using DecisionTree.DotTreeExtensions;
 
 namespace DecisionTree.Tests
 {
