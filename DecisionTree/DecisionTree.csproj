@@ -6,7 +6,7 @@
     <Title>DecisionTree</Title>
     <Authors>Piotr Smreczynski</Authors>
     <PackageTags>DecisionTree; Graphviz</PackageTags>
-    <PackageId>DecisionTree_Smrecz</PackageId>
+    <PackageId>DecisionTree</PackageId>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/Smrecz/DecisionTree</RepositoryUrl>
