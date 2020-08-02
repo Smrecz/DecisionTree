@@ -15,7 +15,7 @@
     <Description>Decision Tree + Visualisation
 Lightweight framework to define decision trees via configuration with option to generate graph definition in DOT language.</Description>
     <PackageReleaseNotes>Initial version</PackageReleaseNotes>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
