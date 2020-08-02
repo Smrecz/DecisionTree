@@ -13,7 +13,8 @@
     <PackageProjectUrl>https://github.com/Smrecz/DecisionTree</PackageProjectUrl>
     <Copyright>Piotr Smreczynski</Copyright>
     <Description>Lightweight framework to define decision trees via configuration with option to get decision tree graph definition in DOT language.</Description>
-    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixing poor namespace choices</PackageReleaseNotes>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
