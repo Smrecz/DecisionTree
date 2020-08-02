@@ -7,7 +7,7 @@ namespace DecisionTree.DotTreeExtensions
 {
     public static class NodePrintableExtensions
     {
-        private static readonly MethodInfo PrintNodeMethod = 
+        private static readonly MethodInfo PrintNodeMethod =
                     typeof(NodePrintableExtensions)
                     .GetMethod(nameof(PrintNode));
 
@@ -15,13 +15,16 @@ namespace DecisionTree.DotTreeExtensions
                     typeof(NodePrintableExtensions)
                     .GetMethod(nameof(PrintResult));
 
+        private static readonly string DecisionNodeName = typeof(DecisionNode<,>).Name;
+        private static readonly string DecisionResultName = typeof(DecisionResult<>).Name;
+
         public static string PrintNode<T, TResult>(this DecisionNode<T, TResult> node, string label = null)
         {
             var printResult = string.Empty;
 
             //Escape quotation marks as they are special symbols in DOT language.
             var condition = $"\"{node.Condition.ToString().Replace("\"", "\\\"")}\"";
-            
+
             if (label != null)
                 printResult += $"{condition} [label = \"{label}\"]{Environment.NewLine}";
 
@@ -41,17 +44,19 @@ namespace DecisionTree.DotTreeExtensions
         {
             var genericTypes = decision.GetType().GenericTypeArguments;
             var printParams = new object[] { decision, key };
+            var decisionName = decision.GetType().Name;
 
-            return genericTypes.Count() switch
-            {
-                1 => PrintResultMethod
-                        .MakeGenericMethod(genericTypes)
-                        .Invoke(decision, printParams),
-                2 => PrintNodeMethod
-                        .MakeGenericMethod(genericTypes)
-                        .Invoke(decision, printParams),
-                _ => throw new ArgumentException("Unexpected extension count")
-            };
-        }       
+            if (decisionName == DecisionResultName)
+                return PrintResultMethod
+                    .MakeGenericMethod(genericTypes)
+                    .Invoke(decision, printParams);
+
+            if (decisionName == DecisionNodeName)
+                return PrintNodeMethod
+                    .MakeGenericMethod(genericTypes)
+                    .Invoke(decision, printParams);
+
+            throw new ArgumentException("Unexpected extension count.", nameof(decision));
+        }
     }
 }
