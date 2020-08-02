@@ -33,7 +33,10 @@ namespace DecisionTree.Builders
         public DecisionNode<T, TResult> Build()
         {
             if (_condition == null)
-                throw new MissingBuilderConfigException($"{nameof(_condition)} has to be configured.");
+                throw new MissingBuilderConfigException($"{nameof(AddCondition)} is mandatory and has to be configured.");
+            if (_defaultDecision == null && _paths.Count == 0)
+                throw new MissingBuilderConfigException($"Either {nameof(AddDefault)} or at least one {nameof(AddPath)} has to be configured.");
+
             return new DecisionNode<T, TResult>(_condition, _paths, _defaultDecision);
         }
     }

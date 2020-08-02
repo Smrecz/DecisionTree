@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using DecisionTree.Decisions;
 
@@ -18,6 +17,8 @@ namespace DecisionTree.DotTreeExtensions
         private static readonly string DecisionNodeName = typeof(DecisionNode<,>).Name;
         private static readonly string DecisionResultName = typeof(DecisionResult<>).Name;
 
+        private const string DefaultOptionText = "#default_option";
+
         public static string PrintNode<T, TResult>(this DecisionNode<T, TResult> node, string label = null)
         {
             var printResult = string.Empty;
@@ -32,7 +33,7 @@ namespace DecisionTree.DotTreeExtensions
                 printResult += $"{condition} -> {InvokeChildPrint(decision, key.ToString())}";
 
             if (node.DefaultPath != null)
-                printResult += $"{condition} -> {InvokeChildPrint(node.DefaultPath, "#default_option")}";
+                printResult += $"{condition} -> {InvokeChildPrint(node.DefaultPath, DefaultOptionText)}";
 
             return printResult;
         }

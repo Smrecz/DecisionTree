@@ -105,12 +105,27 @@ namespace DecisionTree.Tests
         }
 
         [Fact]
-        public void Builder_DecisionNode_Throw_Missing_Config()
+        public void Builder_DecisionNode_Throw_Missing_Condition()
         {
             //Arrange
 
             //Act
             static void BuildAction() => new DecisionNodeBuilder<BoolDto, bool>()
+                .AddPath(true, TrueResult)
+                .Build();
+
+            //Assert
+            Assert.Throws<MissingBuilderConfigException>(BuildAction);
+        }
+
+        [Fact]
+        public void Builder_DecisionNode_Throw_Missing_Path()
+        {
+            //Arrange
+
+            //Act
+            static void BuildAction() => new DecisionNodeBuilder<BoolDto, bool>()
+                .AddCondition(x => x.BoolProperty)
                 .Build();
 
             //Assert

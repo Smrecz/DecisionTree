@@ -10,8 +10,7 @@ namespace DecisionTree.Tests
 {
     public class DecisionTreeTest
     {
-        private static readonly string[] expectedGraphDefinition = new string[]
-        {
+        private static readonly string[] ExpectedGraphDefinition = {
             "digraph G {",
             "rankdir = LR;",
             "\"x => (x.Project.ItemsToDo == 0)\" -> \"FinishResult\" [label = \"True\"]",
@@ -40,12 +39,12 @@ namespace DecisionTree.Tests
             var graphDefinition = tree.ConvertToDotGraph();
 
             //Assert
-            var expected = string.Join(Environment.NewLine, expectedGraphDefinition);
+            var expected = string.Join(Environment.NewLine, ExpectedGraphDefinition);
             Assert.Equal(expected, graphDefinition);
         }
 
         [Theory]
-        [MemberData(nameof(DecisionTreeDtos))]
+        [MemberData(nameof(DecisionTreeDtoList))]
         public void DecisionTree_Should_Follow_Paths(ItProjectDecisionDto dto, string expectedResult)
         {
             //Arrange
@@ -58,7 +57,7 @@ namespace DecisionTree.Tests
             Assert.Equal(expectedResult, dto.Result);
         }
 
-        public static IEnumerable<object[]> DecisionTreeDtos =>
+        public static IEnumerable<object[]> DecisionTreeDtoList =>
            new List<object[]>
            {
                 new object[]
