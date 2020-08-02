@@ -7,7 +7,7 @@ Available on [![NuGet](https://img.shields.io/nuget/v/DecisionTree.svg)](https:/
 
 DecisionTree is aimed to provide a skeleton to build your decision tree around and to facilitate logic understanding, requirements cross-check, knowledge sharing by generating visualization definition in DOT language.<br>
 
-# DOT graph definition
+# Graph definition in DOT
 DOT language is used to define graphs and is understood by many tools.<br>
 (all of which have dependency on Graphviz: https://graphviz.org/)<br>
 
