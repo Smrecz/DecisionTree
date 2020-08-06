@@ -23,6 +23,10 @@ Below is a graph from generated DOT definition ([DOT](https://github.com/Smrecz/
 
 ![ProjectDecisionTree Graph](https://github.com/Smrecz/DecisionTree/blob/master/ProjectDecisionTree.png)
 
+# CONTRIBUTION
+If you would like to support my work by making a Donation (€10), you are welcome to do so:<br>
+[![Donate](https://img.shields.io/badge/donate-PayPal-yellow.svg)](https://www.paypal.me/smrecz/10)
+
 # TODO
 <b>ALL SUGGESTIONS ARE WELCOME!</b>
 <br>
