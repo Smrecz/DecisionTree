@@ -13,7 +13,7 @@ DOT language is used to define graphs and is understood by many tools.<br>
 (all of which have dependency on Graphviz: https://graphviz.org/)<br>
 
 DecisionTree's ConvertToDotGraph() method output can be used to generate a graph visualisation.<br>
-You can use on-line tools like for example: http://www.webgraphviz.com/<br>
+You can use on-line tools like for example: https://dreampuf.github.io/GraphvizOnline/<br>
 
 # Examples
 Check out [ProjectDecisionTree.cs](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/Tree/ProjectDecisionTree.cs) as an example of defined decision tree.<br>
