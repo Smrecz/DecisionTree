@@ -2,11 +2,12 @@
 
 DecisionTree is a lightweight open source framework that helps you define decision trees via config and generates DOT graph definition.<br>
 
-Available on <a href="https://www.nuget.org/packages/DecisionTree"><img alt="Nuget" src="https://buildstats.info/nuget/DecisionTree"></a> [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/Smrecz/DecisionTree/blob/master/LICENSE)<br>
+Available on:<br>
+<a href="https://www.nuget.org/packages/DecisionTree"><img alt="Nuget" src="https://buildstats.info/nuget/DecisionTree"></a> [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/Smrecz/DecisionTree/blob/master/LICENSE)<br>
 
 # Aim
 
-DecisionTree is aimed to provide a skeleton to build your decision tree around and to facilitate logic understanding, requirements cross-check, knowledge sharing by generating visualization definition in DOT language.<br>
+DecisionTree is aimed to provide a skeleton to build your decision tree around and to facilitate logic understanding, requirements cross-check and knowledge sharing by generating visualization definition in DOT language.<br>
 
 # Graph definition in DOT
 DOT language is used to define graphs and is understood by many tools.<br>
