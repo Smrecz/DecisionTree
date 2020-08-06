@@ -6,7 +6,13 @@
         {
             BoolProperty = value;
         }
-        public bool BoolProperty { get; }
+        public bool BoolProperty { get; set; }
         public bool Result { get; set; }
+
+        public BoolDto SetResult(bool value)
+        {
+            Result = value;
+            return this;
+        }
     }
 }

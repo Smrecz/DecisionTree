@@ -6,74 +6,77 @@ using DecisionTree.Tree;
 
 namespace DecisionTree.Tests.Tree
 {
-    public class ProjectDecisionTree<T> : DecisionTreeBase<T, bool>
-        where T : ItProjectDecisionDto
+    public class ProjectDecisionTree : DecisionTreeBase<ItProjectDecisionDto, bool>
     {
-        private static readonly DecisionResult<T> DoNothingResult =
-            new DecisionResultBuilder<T>()
+        private static readonly DecisionResult<ItProjectDecisionDto> DoNothingResult =
+            new DecisionResultBuilder<ItProjectDecisionDto>()
                 .AddTitle(nameof(DoNothingResult))
                 .Build();
 
-        private static readonly DecisionResult<T> FinishResult =
-            new DecisionResultBuilder<T>()
+        private static readonly DecisionResult<ItProjectDecisionDto> FinishResult =
+            new DecisionResultBuilder<ItProjectDecisionDto>()
                 .AddTitle(nameof(FinishResult))
-                .AddAction(dto => dto.Result = "Project is finished.")
+                .AddAction(dto => dto.SetResult("Project is finished."))
                 .Build();
 
-        private static readonly DecisionResult<T> RequestBudgetResult =
-            new DecisionResultBuilder<T>()
+        private static readonly DecisionResult<ItProjectDecisionDto> RequestBudgetResult =
+            new DecisionResultBuilder<ItProjectDecisionDto>()
                 .AddTitle(nameof(RequestBudgetResult))
-                .AddAction(dto => dto.Result = "Need more money.")
+                .AddAction(dto => 
+                    dto
+                    .SetResult("Not enough funds.")
+                    .SetIsOnHold(true))
                 .Build();
 
-        private static readonly DecisionResult<T> MoveDeadlineResult =
-            new DecisionResultBuilder<T>()
+        private static readonly DecisionResult<ItProjectDecisionDto> MoveDeadlineResult =
+            new DecisionResultBuilder<ItProjectDecisionDto>()
                 .AddTitle(nameof(MoveDeadlineResult))
-                .AddAction(dto => dto.Result = "We are not going to make it.")
+                .AddAction(dto => dto.SetResult("Timeline reevaluation needed."))
                 .Build();
 
-        private static readonly DecisionNode<T, bool> BudgetDecision =
-            new DecisionNodeBuilder<T, bool>()
+        private static readonly DecisionNode<ItProjectDecisionDto, bool> BudgetDecision =
+            new DecisionNodeBuilder<ItProjectDecisionDto, bool>()
                 .AddCondition(dto => dto.Project.BudgetRemaining < dto.Project.ItemsToDo * 1000)
                 .AddPath(true, RequestBudgetResult)
                 .AddPath(false, DoNothingResult)
+                .AddAction(dto => dto.SetIsBudgetReviewed(true))
                 .Build();
 
-        private static readonly DecisionNode<T, bool> DeadlineDecision =
-            new DecisionNodeBuilder<T, bool>()
+        private static readonly DecisionNode<ItProjectDecisionDto, bool> DeadlineDecision =
+            new DecisionNodeBuilder<ItProjectDecisionDto, bool>()
                 .AddCondition(dto => dto.Project.TimeToDeadline.Days < 7)
                 .AddPath(true, MoveDeadlineResult)
                 .AddPath(false, BudgetDecision)
                 .Build();
 
-        private static readonly DecisionNode<T, bool> ToDoDecision =
-            new DecisionNodeBuilder<T, bool>()
+        private static readonly DecisionNode<ItProjectDecisionDto, bool> ToDoDecision =
+            new DecisionNodeBuilder<ItProjectDecisionDto, bool>()
                 .AddCondition(dto => dto.Project.ItemsToDo > 10)
                 .AddPath(true, DeadlineDecision)
                 .AddPath(false, BudgetDecision)
                 .Build();
 
-        private static readonly DecisionNode<T, ProjectType> ProjectTypeDecision =
-            new DecisionNodeBuilder<T, ProjectType>()
+        private static readonly DecisionNode<ItProjectDecisionDto, ProjectType> ProjectTypeDecision =
+            new DecisionNodeBuilder<ItProjectDecisionDto, ProjectType>()
                 .AddCondition(dto => dto.Project.Type)
                 .AddPath(ProjectType.Internal, DoNothingResult)
                 .AddDefault(ToDoDecision)
                 .Build();
 
-        private static readonly DecisionNode<T, bool> IsOnHoldDecision =
-            new DecisionNodeBuilder<T, bool>()
+        private static readonly DecisionNode<ItProjectDecisionDto, bool> IsOnHoldDecision =
+            new DecisionNodeBuilder<ItProjectDecisionDto, bool>()
                 .AddCondition(dto => dto.Project.IsOnHold)
                 .AddPath(true, DoNothingResult)
                 .AddPath(false, ProjectTypeDecision)
                 .Build();
 
-        private static readonly DecisionNode<T, bool> FinishedDecision =
-            new DecisionNodeBuilder<T, bool>()
+        private static readonly DecisionNode<ItProjectDecisionDto, bool> FinishedDecision =
+            new DecisionNodeBuilder<ItProjectDecisionDto, bool>()
                 .AddCondition(dto => dto.Project.ItemsToDo == 0)
                 .AddPath(true, FinishResult)
                 .AddPath(false, IsOnHoldDecision)
                 .Build();
 
-        public override DecisionNode<T, bool> Trunk() => FinishedDecision;
+        public override DecisionNode<ItProjectDecisionDto, bool> GetTrunk() => FinishedDecision;
     }
 }

@@ -1,0 +1,23 @@
+﻿{
+    "Project": {
+        "Type": 0,
+        "IsOnHold": false,
+        "IsBudgetReviewed": true,
+        "ItemsToDo": 15,
+        "BudgetRemaining": 1000000,
+        "TimeToDeadline": {
+            "Ticks": 8640000000000,
+            "Days": 10,
+            "Hours": 0,
+            "Milliseconds": 0,
+            "Minutes": 0,
+            "Seconds": 0,
+            "TotalDays": 10,
+            "TotalHours": 240,
+            "TotalMilliseconds": 864000000,
+            "TotalMinutes": 14400,
+            "TotalSeconds": 864000
+        }
+    },
+    "Result": null
+}

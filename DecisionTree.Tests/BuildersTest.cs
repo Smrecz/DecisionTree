@@ -11,19 +11,19 @@ namespace DecisionTree.Tests
         private static readonly DecisionResult<BoolDto> TrueResult = 
             new DecisionResultBuilder<BoolDto>()
             .AddTitle("True result")
-            .AddAction(boolDto => boolDto.Result = true)
+            .AddAction(boolDto => boolDto.SetResult(true))
             .Build();
 
         private static readonly DecisionResult<BoolDto> FalseResult =
             new DecisionResultBuilder<BoolDto>()
             .AddTitle("False result")
-            .AddAction(boolDto => boolDto.Result = false)
+            .AddAction(boolDto => boolDto.SetResult(false))
             .Build();
 
         private static readonly DecisionResult<BoolDto> DefaultResult =
             new DecisionResultBuilder<BoolDto>()
             .AddTitle("False result")
-            .AddAction(boolDto => boolDto.Result = false)
+            .AddAction(boolDto => boolDto.SetResult(false))
             .Build();
 
 

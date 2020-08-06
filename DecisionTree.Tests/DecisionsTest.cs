@@ -11,24 +11,24 @@ namespace DecisionTree.Tests
     public class DecisionsTest
     {
         private static readonly DecisionResult<BoolDto> TrueResult = 
-            new DecisionResult<BoolDto>("True result", boolDto => boolDto.Result = true);
+            new DecisionResult<BoolDto>("True result", boolDto => boolDto.SetResult(true));
 
         private static readonly DecisionResult<BoolDto> FalseResult = 
-            new DecisionResult<BoolDto>("False result", boolDto => boolDto.Result = false);
+            new DecisionResult<BoolDto>("False result", boolDto => boolDto.SetResult(false));
 
         private static readonly DecisionResult<BoolDto> DefaultResult = 
-            new DecisionResult<BoolDto>("False result", boolDto => boolDto.Result = false);
+            new DecisionResult<BoolDto>("False result", boolDto => boolDto.SetResult(false));
 
 
         [Fact]
         public void ResultNode_Should_Evaluate_Action()
         {
             //Arrange
-            static void Action(BoolDto x) => x.Result = true;
+            Expression<Func<BoolDto, BoolDto>> action = boolDto => boolDto.SetResult(true);
 
             var trueDto = new BoolDto(true);
 
-            var resultNode = new DecisionResult<BoolDto>("Result", Action);
+            var resultNode = new DecisionResult<BoolDto>("Result", action);
 
             //Act
             resultNode.Evaluate(trueDto);
@@ -42,7 +42,7 @@ namespace DecisionTree.Tests
         {
             //Arrange
             Expression<Func<BoolDto, bool>> condition = boolDto => boolDto.BoolProperty;       
-            var paths = new Dictionary<bool, IDecision<BoolDto>>()
+            var paths = new Dictionary<bool, IDecision<BoolDto>>
             {
                 {true, TrueResult },
                 {false, FalseResult }
@@ -67,7 +67,7 @@ namespace DecisionTree.Tests
         {
             //Arrange
             Expression<Func<BoolDto, bool>> condition = boolDto => boolDto.BoolProperty;
-            var paths = new Dictionary<bool, IDecision<BoolDto>>()
+            var paths = new Dictionary<bool, IDecision<BoolDto>>
             {
                 {true, TrueResult }
             };

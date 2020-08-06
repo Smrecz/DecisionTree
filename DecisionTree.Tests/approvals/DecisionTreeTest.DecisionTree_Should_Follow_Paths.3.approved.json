@@ -1,0 +1,23 @@
+﻿{
+    "Project": {
+        "Type": 0,
+        "IsOnHold": false,
+        "IsBudgetReviewed": false,
+        "ItemsToDo": 15,
+        "BudgetRemaining": 0,
+        "TimeToDeadline": {
+            "Ticks": 864000000000,
+            "Days": 1,
+            "Hours": 0,
+            "Milliseconds": 0,
+            "Minutes": 0,
+            "Seconds": 0,
+            "TotalDays": 1,
+            "TotalHours": 24,
+            "TotalMilliseconds": 86400000,
+            "TotalMinutes": 1440,
+            "TotalSeconds": 86400
+        }
+    },
+    "Result": "Timeline reevaluation needed."
+}

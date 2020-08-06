@@ -11,6 +11,13 @@ namespace DecisionTree.Builders
         private readonly Dictionary<TResult, IDecision<T>> _paths = new Dictionary<TResult, IDecision<T>>();
         private Expression<Func<T, TResult>> _condition;
         private IDecision<T> _defaultDecision;
+        private Expression<Func<T, T>> _action;
+
+        public DecisionNodeBuilder<T, TResult> AddAction(Expression<Func<T, T>> action)
+        {
+            _action = action;
+            return this;
+        }
 
         public DecisionNodeBuilder<T, TResult> AddPath(TResult key, IDecision<T> path)
         {
@@ -37,7 +44,7 @@ namespace DecisionTree.Builders
             if (_defaultDecision == null && _paths.Count == 0)
                 throw new MissingBuilderConfigException($"Either {nameof(AddDefault)} or at least one {nameof(AddPath)} has to be configured.");
 
-            return new DecisionNode<T, TResult>(_condition, _paths, _defaultDecision);
+            return new DecisionNode<T, TResult>(_condition, _paths, _defaultDecision, _action);
         }
     }
 }

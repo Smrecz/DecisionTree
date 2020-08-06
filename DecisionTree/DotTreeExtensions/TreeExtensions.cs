@@ -8,14 +8,15 @@ namespace DecisionTree.DotTreeExtensions
     {
         public static string ConvertToDotGraph<T, TResult>(this DecisionTreeBase<T, TResult> decisionTree, bool horizontal = false)
         {
-            var graphDefinition = $"digraph G {{{Environment.NewLine}" +
-            $"{(horizontal ? string.Empty : $"rankdir = LR;{Environment.NewLine}")}" +
-            $"{decisionTree.Trunk().PrintNode()}" +
+            var newLine = Environment.NewLine;
+            var graphDefinition = $"digraph G {{{newLine}" +
+            $"{(horizontal ? $"rankdir = LR;{newLine}" : string.Empty)}" +
+            $"{decisionTree.GetTrunk().PrintNode()}" +
             "}";
 
-            var deduplicatePaths = graphDefinition.Split(Environment.NewLine).Distinct();
+            var deduplicatePaths = graphDefinition.Split(newLine).Distinct();
 
-            return string.Join(Environment.NewLine, deduplicatePaths);
+            return string.Join(newLine, deduplicatePaths);
         }
     }
 }

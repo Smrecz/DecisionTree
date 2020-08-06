@@ -1,159 +1,102 @@
-﻿using DecisionTree.Tests.Dto;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using ApprovalTests;
+using ApprovalTests.Namers;
+using ApprovalTests.Reporters;
+using DecisionTree.DotTreeExtensions;
+using DecisionTree.Tests.Dto;
+using DecisionTree.Tests.Model;
 using DecisionTree.Tests.Tree;
 using Xunit;
-using System;
-using DecisionTree.Tests.Model;
-using System.Collections.Generic;
-using DecisionTree.DotTreeExtensions;
 
 namespace DecisionTree.Tests
 {
+    [UseReporter(typeof(DiffReporter))]
+    [UseApprovalSubdirectory("./approvals")]
     public class DecisionTreeTest
     {
-        private static readonly string[] ExpectedGraphDefinition = {
-            "digraph G {",
-            "rankdir = LR;",
-            "\"dto => (dto.Project.ItemsToDo == 0)\" -> \"FinishResult\" [label = \"True\"]",
-            "\"dto => (dto.Project.ItemsToDo == 0)\" -> \"dto => dto.Project.IsOnHold\" [label = \"False\"]",
-            "\"dto => dto.Project.IsOnHold\" -> \"DoNothingResult\" [label = \"True\"]",
-            "\"dto => dto.Project.IsOnHold\" -> \"dto => dto.Project.Type\" [label = \"False\"]",
-            "\"dto => dto.Project.Type\" -> \"DoNothingResult\" [label = \"Internal\"]",
-            "\"dto => dto.Project.Type\" -> \"dto => (dto.Project.ItemsToDo > 10)\" [label = \"#default_option\"]",
-            "\"dto => (dto.Project.ItemsToDo > 10)\" -> \"dto => (dto.Project.TimeToDeadline.Days < 7)\" [label = \"True\"]",
-            "\"dto => (dto.Project.TimeToDeadline.Days < 7)\" -> \"MoveDeadlineResult\" [label = \"True\"]",
-            "\"dto => (dto.Project.TimeToDeadline.Days < 7)\" -> \"dto => (dto.Project.BudgetRemaining < (dto.Project.ItemsToDo * 1000))\" [label = \"False\"]",
-            "\"dto => (dto.Project.BudgetRemaining < (dto.Project.ItemsToDo * 1000))\" -> \"RequestBudgetResult\" [label = \"True\"]",
-            "\"dto => (dto.Project.BudgetRemaining < (dto.Project.ItemsToDo * 1000))\" -> \"DoNothingResult\" [label = \"False\"]",
-            "\"dto => (dto.Project.ItemsToDo > 10)\" -> \"dto => (dto.Project.BudgetRemaining < (dto.Project.ItemsToDo * 1000))\" [label = \"False\"]",
-            "}"
-        };
-
-
         [Fact]
         public void DecisionTree_Should_Define_Graph()
         {
             //Arrange
-            var tree = new ProjectDecisionTree<ItProjectDecisionDto>();
+            var tree = new ProjectDecisionTree();
 
             //Act
             var graphDefinition = tree.ConvertToDotGraph();
 
             //Assert
-            var expected = string.Join(Environment.NewLine, ExpectedGraphDefinition);
-            Assert.Equal(expected, graphDefinition);
+            Approvals.VerifyHtml(graphDefinition);
         }
 
         [Theory]
         [MemberData(nameof(DecisionTreeDtoList))]
-        public void DecisionTree_Should_Follow_Paths(ItProjectDecisionDto dto, string expectedResult)
+        public void DecisionTree_Should_Follow_Paths(int counter, ItProjectDecisionDto dto)
         {
             //Arrange
-            var tree = new ProjectDecisionTree<ItProjectDecisionDto>();
+            var tree = new ProjectDecisionTree();
 
             //Act
-            tree.Trunk().Evaluate(dto);
+            tree.GetTrunk().Evaluate(dto);
 
             //Assert
-            Assert.Equal(expectedResult, dto.Result);
+            NamerFactory.AdditionalInformation = counter.ToString();
+            Approvals.VerifyJson(JsonSerializer.Serialize(dto));
         }
 
         public static IEnumerable<object[]> DecisionTreeDtoList =>
            new List<object[]>
            {
-                new object[]
-                {
-                    new ItProjectDecisionDto()
-                    {
-                        Project = new ItProject()
-                        {
-                            ItemsToDo = 0
-                        }
-                    },
-                    "Project is finished."
-                },
-                new object[]
-                {
-                    new ItProjectDecisionDto()
-                    {
-                        Project = new ItProject()
-                        {
-                            ItemsToDo = 5,
-                            IsOnHold = true
-                        }
-                    },
-                    null
-                },
-                new object[]
-                {
-                    new ItProjectDecisionDto()
-                    {
-                        Project = new ItProject()
-                        {
-                            ItemsToDo = 5,
-                            IsOnHold = false,
-                            Type = ProjectType.Internal
-                        }
-                    },
-                    null
-                },
-                new object[]
-                {
-                    new ItProjectDecisionDto()
-                    {
-                        Project = new ItProject()
-                        {
-                            ItemsToDo = 15,
-                            IsOnHold = false,
-                            Type = ProjectType.Financial,
-                            TimeToDeadline = TimeSpan.FromDays(1)
-                        }                    
-                    },
-                    "We are not going to make it."
-                },
-                new object[]
-                {
-                    new ItProjectDecisionDto()
-                    {
-                        Project = new ItProject()
-                        {
-                            ItemsToDo = 5,
-                            IsOnHold = false,
-                            Type = ProjectType.Financial,
-                            BudgetRemaining = 1000
-                        }
-                    },
-                    "Need more money."
-                },
-                new object[]
-                {
-                    new ItProjectDecisionDto()
-                    {
-                        Project = new ItProject()
-                        {
-                            ItemsToDo = 15,
-                            IsOnHold = false,
-                            Type = ProjectType.Financial,
-                            TimeToDeadline = TimeSpan.FromDays(10),
-                            BudgetRemaining = 1000
-                        }
-                    },
-                    "Need more money."
-                },
-                new object[]
-                {
-                    new ItProjectDecisionDto()
-                    {
-                        Project = new ItProject()
-                        {
-                            ItemsToDo = 15,
-                            IsOnHold = false,
-                            Type = ProjectType.Financial,
-                            TimeToDeadline = TimeSpan.FromDays(10),
-                            BudgetRemaining = 1000000
-                        }
-                    },
-                    null
-                }
+               CreateDtoTestData(0,
+                   new ItProject
+                   {
+                       ItemsToDo = 0
+                   }),
+               CreateDtoTestData(1,
+                   new ItProject
+                   {
+                       ItemsToDo = 5,
+                       IsOnHold = true
+                   }),
+               CreateDtoTestData(2,
+                   new ItProject
+                   {
+                       ItemsToDo = 5,
+                       Type = ProjectType.Internal
+                   }),
+               CreateDtoTestData(3,
+                   new ItProject
+                   {
+                       ItemsToDo = 15,
+                       Type = ProjectType.Financial,
+                       TimeToDeadline = TimeSpan.FromDays(1)
+                   }),
+               CreateDtoTestData(4,
+                   new ItProject
+                   {
+                       ItemsToDo = 5,
+                       Type = ProjectType.Financial,
+                       BudgetRemaining = 1000
+                   }),
+               CreateDtoTestData(5,
+                   new ItProject
+                   {
+                       ItemsToDo = 15,
+                       Type = ProjectType.Financial,
+                       TimeToDeadline = TimeSpan.FromDays(10),
+                       BudgetRemaining = 1000
+                   }),
+               CreateDtoTestData(6,
+                   new ItProject
+                   {
+                       ItemsToDo = 15,
+                       Type = ProjectType.Financial,
+                       TimeToDeadline = TimeSpan.FromDays(10),
+                       BudgetRemaining = 1000000
+                   })
            };
+
+        private static object[] CreateDtoTestData(int counter, ItProject project) =>
+            new object[] {counter, new ItProjectDecisionDto { Project = project } };
     }
 }

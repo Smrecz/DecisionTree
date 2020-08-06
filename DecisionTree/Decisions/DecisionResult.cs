@@ -1,19 +1,22 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace DecisionTree.Decisions
 {
     public class DecisionResult<T> : IDecision<T>
     {
-        public DecisionResult(string title, Action<T> action = null)
+        public DecisionResult(string title, Expression<Func<T, T>> action = null)
         {
-            _action = action;
+            Action = action;
+            _actionFunc = action?.Compile();
             Title = title;
         }
 
         public string Title { get; }
-        
-        private readonly Action<T> _action;
+        public Expression<Func<T, T>> Action { get; }
 
-        public void Evaluate(T dto) => _action?.Invoke(dto);
+        private readonly Func<T, T> _actionFunc;
+
+        public void Evaluate(T dto) => _actionFunc?.Invoke(dto);
     }
 }

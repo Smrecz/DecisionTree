@@ -1,13 +1,14 @@
 ﻿using DecisionTree.Decisions;
 using DecisionTree.Exceptions;
 using System;
+using System.Linq.Expressions;
 
 namespace DecisionTree.Builders
 {
     public class DecisionResultBuilder<T>
     {
         private string _title;
-        private Action<T> _action;
+        private Expression<Func<T, T>> _action;
 
         public DecisionResultBuilder<T> AddTitle(string title)
         {
@@ -15,7 +16,7 @@ namespace DecisionTree.Builders
             return this;
         }
 
-        public DecisionResultBuilder<T> AddAction(Action<T> action)
+        public DecisionResultBuilder<T> AddAction(Expression<Func<T, T>> action)
         {
             _action = action;
             return this;
