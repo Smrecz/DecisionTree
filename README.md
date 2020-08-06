@@ -2,7 +2,7 @@
 
 DecisionTree is a lightweight open source framework that helps you define decision trees via config and generates DOT graph definition.<br>
 
-Available on [![NuGet](https://img.shields.io/nuget/v/DecisionTree.svg)](https://www.nuget.org/packages/DecisionTree/) [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/Smrecz/DecisionTree/blob/master/LICENSE)<br>
+Available on <a href="https://www.nuget.org/packages/DecisionTree"><img alt="Nuget" src="https://buildstats.info/nuget/DecisionTree"></a> [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/Smrecz/DecisionTree/blob/master/LICENSE)<br>
 
 # Aim
 
