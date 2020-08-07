@@ -6,12 +6,12 @@ namespace DecisionTree.DotTreeExtensions
 {
     public static class TreeExtensions
     {
-        public static string ConvertToDotGraph<T, TResult>(this DecisionTreeBase<T, TResult> decisionTree, bool horizontal = false)
+        public static string ConvertToDotGraph<T>(this DecisionTreeBase<T> decisionTree, bool horizontal = false)
         {
             var newLine = Environment.NewLine;
             var graphDefinition = $"digraph G {{{newLine}" +
             $"{(horizontal ? $"rankdir = LR;{newLine}" : string.Empty)}" +
-            $"{decisionTree.GetTrunk().PrintNode()}" +
+            $"{decisionTree.GetTrunk().InvokeChildPrint()}" +
             "}";
 
             var deduplicatePaths = graphDefinition.Split(newLine).Distinct();

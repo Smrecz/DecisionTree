@@ -5,7 +5,9 @@ using ApprovalTests;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
 using DecisionTree.DotTreeExtensions;
+using DecisionTree.Exceptions;
 using DecisionTree.Tests.Dto;
+using DecisionTree.Tests.Mock;
 using DecisionTree.Tests.Model;
 using DecisionTree.Tests.Tree;
 using Xunit;
@@ -27,6 +29,32 @@ namespace DecisionTree.Tests
 
             //Assert
             Approvals.VerifyHtml(graphDefinition);
+        }
+
+        [Fact]
+        public void DecisionTree_Fake_Should_Throw()
+        {
+            //Arrange
+            var tree = new FakeTree<bool>();
+
+            //Act
+            void Evaluate() => tree.GetTrunk().Evaluate(true);
+
+            //Assert
+            Assert.Throws<NotImplementedException>(Evaluate);
+        }
+
+        [Fact]
+        public void DecisionTree_Should_Throw_On_Custom_Types()
+        {
+            //Arrange
+            var tree = new FakeTree<bool>();
+
+            //Act
+            string GraphDefinition() => tree.ConvertToDotGraph();
+
+            //Assert
+            Assert.Throws<NotPrintableTypeException>(GraphDefinition);
         }
 
         [Theory]

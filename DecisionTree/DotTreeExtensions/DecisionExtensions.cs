@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
 using DecisionTree.Decisions;
+using DecisionTree.Exceptions;
 
 namespace DecisionTree.DotTreeExtensions
 {
@@ -25,6 +26,25 @@ namespace DecisionTree.DotTreeExtensions
         private const string ActionPartRegexPattern = "(?=\\.[^\\)]+?\\([^\\)]+\\))";
         private const string FontStyle = "color=\"white\"";
         private const string ActionUnderscore = "<tr><td bgcolor=\"white\" cellpadding=\"1\"></td></tr>";
+
+        public static string InvokeChildPrint<T>(this IDecision<T> decision, string key = null)
+        {
+            var genericTypes = decision.GetType().GenericTypeArguments;
+            var decisionName = decision.GetType().Name;
+            var printParams = new object[] { decision, key };
+
+            if (decisionName == DecisionResultName)
+                return (string)PrintResultMethod
+                    .MakeGenericMethod(genericTypes)
+                    .Invoke(decision, printParams);
+
+            if (decisionName == DecisionNodeName)
+                return (string)PrintNodeMethod
+                    .MakeGenericMethod(genericTypes)
+                    .Invoke(decision, printParams);
+
+            throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
+        }
 
         public static string PrintNode<T, TResult>(this DecisionNode<T, TResult> node, string label = null)
         {
@@ -57,25 +77,7 @@ namespace DecisionTree.DotTreeExtensions
 
             return $"\"{node.Title}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
         }
-        private static object InvokeChildPrint<T>(IDecision<T> decision, string key)
-        {
-            var genericTypes = decision.GetType().GenericTypeArguments;
-            var printParams = new object[] { decision, key };
-            var decisionName = decision.GetType().Name;
-
-            if (decisionName == DecisionResultName)
-                return PrintResultMethod
-                    .MakeGenericMethod(genericTypes)
-                    .Invoke(decision, printParams);
-
-            if (decisionName == DecisionNodeName)
-                return PrintNodeMethod
-                    .MakeGenericMethod(genericTypes)
-                    .Invoke(decision, printParams);
-
-            throw new ArgumentException("Unexpected extension count.", nameof(decision));
-        }
-
+        
         private static string GetHtmlTable(string action, string title, TitleStyle titleStyle)
         {
             var style = GetTitleStyle(titleStyle);

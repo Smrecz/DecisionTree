@@ -2,8 +2,8 @@
 
 namespace DecisionTree.Tree
 {
-    public abstract class DecisionTreeBase<T, TResult>
+    public abstract class DecisionTreeBase<T>
     {
-        public abstract DecisionNode<T, TResult> GetTrunk();
+        public abstract IDecision<T> GetTrunk();
     }
 }

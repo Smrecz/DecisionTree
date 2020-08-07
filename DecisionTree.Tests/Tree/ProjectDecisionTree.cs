@@ -6,7 +6,7 @@ using DecisionTree.Tree;
 
 namespace DecisionTree.Tests.Tree
 {
-    public class ProjectDecisionTree : DecisionTreeBase<ItProjectDecisionDto, bool>
+    public class ProjectDecisionTree : DecisionTreeBase<ItProjectDecisionDto>
     {
         private static readonly DecisionResult<ItProjectDecisionDto> DoNothingResult =
             new DecisionResultBuilder<ItProjectDecisionDto>()
@@ -77,6 +77,6 @@ namespace DecisionTree.Tests.Tree
                 .AddPath(false, IsOnHoldDecision)
                 .Build();
 
-        public override DecisionNode<ItProjectDecisionDto, bool> GetTrunk() => FinishedDecision;
+        public override IDecision<ItProjectDecisionDto> GetTrunk() => FinishedDecision;
     }
 }
