@@ -25,13 +25,24 @@ namespace DecisionTree.DotTreeExtensions
         private const string ActionCellStyle = "align=\"left\"";
         private const string ActionPartRegexPattern = "(?=\\.[^\\)]+?\\([^\\)]+\\))";
         private const string FontStyle = "color=\"white\"";
-        private const string ActionUnderscore = "<tr><td bgcolor=\"white\" cellpadding=\"1\"></td></tr>";
+        private const string Separator = "<tr><td bgcolor=\"white\" cellpadding=\"1\"></td></tr>";
+        private static int? _internalCounter = 0;
 
-        public static string InvokeChildPrint<T>(this IDecision<T> decision, string key = null)
+        public static string Print<T>(this IDecision<T> decision, bool useCounter, string key = null)
+        {
+            _internalCounter = useCounter ? (int?) null : 0;
+
+            return decision.InvokeChildPrint(key);
+        }
+
+        private static string InvokeChildPrint<T>(this IDecision<T> decision, string key = null)
         {
             var genericTypes = decision.GetType().GenericTypeArguments;
             var decisionName = decision.GetType().Name;
-            var printParams = new object[] { decision, key };
+
+            _internalCounter++;
+
+            var printParams = new object[] { decision, _internalCounter, key };
 
             if (decisionName == DecisionResultName)
                 return (string)PrintResultMethod
@@ -46,44 +57,54 @@ namespace DecisionTree.DotTreeExtensions
             throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
         }
 
-        public static string PrintNode<T, TResult>(this DecisionNode<T, TResult> node, string label = null)
+        public static string PrintNode<T, TResult>(this DecisionNode<T, TResult> node, int? counter, string label = null)
         {
             var printResult = string.Empty;
 
             //Escape quotation marks as they are special symbols in DOT language.
             var condition = EscapeQuotation(node.Condition.ToString());
+            var titleWithCounter = AddCounter(counter, node.Title);
 
             if (label != null)
-                printResult += $"\"{condition}\" [label = \"{label}\"]{Environment.NewLine}";
+                printResult += $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}";
 
             foreach (var (key, decision) in node.Paths)
-                printResult += $"\"{condition}\" -> {InvokeChildPrint(decision, key.ToString())}";
+                printResult += $"\"{titleWithCounter}\" -> {InvokeChildPrint(decision, key.ToString())}";
 
             if (node.DefaultPath != null)
-                printResult += $"\"{condition}\" -> {InvokeChildPrint(node.DefaultPath, DefaultOptionText)}";
+                printResult += $"\"{titleWithCounter}\" -> {InvokeChildPrint(node.DefaultPath, DefaultOptionText)}";
 
             printResult += node.Action != null
-                ? GetHtmlTable(node.Action.ToString(), condition, TitleStyle.DecisionAction)
-                : GetHtmlTable(string.Empty, condition, TitleStyle.Decision);
+                ? GetHtmlTable(node.Action.ToString(), condition, titleWithCounter, TitleStyle.DecisionAction)
+                : GetHtmlTable(string.Empty, condition, titleWithCounter, TitleStyle.Decision);
 
             return printResult;
         }
 
-        public static string PrintResult<T>(this DecisionResult<T> node, string label)
+        public static string PrintResult<T>(this DecisionResult<T> node, int? counter, string label)
         {
-            var actionDescription = node.Action != null
-                ? GetHtmlTable(node.Action.ToString(), node.Title, TitleStyle.ResultAction)
-                : GetHtmlTable(string.Empty, node.Title, TitleStyle.Result);
+            var titleWithCounter = AddCounter(counter, node.Title);
 
-            return $"\"{node.Title}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
+            var actionDescription = node.Action != null
+                ? GetHtmlTable(node.Action.ToString(), null, titleWithCounter, TitleStyle.ResultAction)
+                : GetHtmlTable(string.Empty,null, titleWithCounter, TitleStyle.Result);
+
+            return $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
         }
-        
-        private static string GetHtmlTable(string action, string title, TitleStyle titleStyle)
+
+        private static string GetHtmlTable(string action, string condition, string title, TitleStyle titleStyle)
         {
             var style = GetTitleStyle(titleStyle);
             var actionStyle = GetActionStyle(style);
 
             var actionPartRow = string.Empty;
+            var conditionRow = string.Empty;
+
+            if (condition != null)
+            {
+                conditionRow += Separator;
+                conditionRow += GetConditionRow(condition);
+            }
 
             var actionParts = Regex
                 .Split(action, ActionPartRegexPattern)
@@ -91,17 +112,24 @@ namespace DecisionTree.DotTreeExtensions
                 .ToList();
 
             if (actionParts.Any())
-                actionPartRow += ActionUnderscore;
+                actionPartRow += Separator;
 
             foreach (var actionPart in actionParts)
                 actionPartRow += GetActionPartRow(actionPart);
 
-            var table = GetTableBody(title, actionPartRow, style);
+            var table = GetTableBody(title, conditionRow, actionPartRow, style);
 
             return $"\"{title}\" [{actionStyle} label = {table}]{Environment.NewLine}";
         }
 
-        private static string GetTableBody(string title, string actionPartRow, string style)
+        private static string AddCounter(int? counter, string title)
+        {
+            return counter != null 
+                ? $"[{counter}] {title}" 
+                : title;
+        }
+
+        private static string GetTableBody(string title, string condition, string actionPartRow, string style)
         {
             var tableStyle = GetTableStyle(style);
             var titleCellStyle = GetTitleCellStyle(style);
@@ -112,9 +140,17 @@ namespace DecisionTree.DotTreeExtensions
                                 $"<font {FontStyle}>{HttpUtility.HtmlEncode(title)}</font>" +
                             "</td>" +
                         "</tr>" +
+                        condition+
                         actionPartRow +
                    "</table>>";
         }
+
+        private static string GetConditionRow(string condition) =>
+            "<tr>" +
+                $"<td {ActionCellStyle}>" +
+                    $"<font {FontStyle}>{HttpUtility.HtmlEncode(condition)}</font>" +
+                "</td>" +
+            "</tr>";
 
         private static string GetActionPartRow(string actionPart) =>
             "<tr>" +
@@ -123,13 +159,13 @@ namespace DecisionTree.DotTreeExtensions
                 "</td>" +
             "</tr>";
 
-        private static string GetTitleCellStyle(string style) => 
+        private static string GetTitleCellStyle(string style) =>
             $"bgcolor=\"{style}\" align=\"center\"";
 
-        private static string GetTableStyle(string style) => 
+        private static string GetTableStyle(string style) =>
             $"border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"{style}\"";
 
-        private static string GetActionStyle(string style) => 
+        private static string GetActionStyle(string style) =>
             $"style = \"filled\" penwidth = 1 fillcolor = \"{style}\" fontname = \"Courier New\" shape = \"Mrecord\"";
 
         private static string GetTitleStyle(TitleStyle titleStyle) =>
@@ -142,8 +178,8 @@ namespace DecisionTree.DotTreeExtensions
                 _ => throw new ArgumentOutOfRangeException(nameof(titleStyle), titleStyle, null)
             };
 
-        private static string EscapeQuotation(string value) => 
+        private static string EscapeQuotation(string value) =>
             value.Replace("\"", "\\\"");
- 
+
     }
 }

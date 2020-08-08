@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using ApprovalTests;
 using ApprovalTests.Namers;
@@ -8,7 +7,7 @@ using DecisionTree.DotTreeExtensions;
 using DecisionTree.Exceptions;
 using DecisionTree.Tests.Dto;
 using DecisionTree.Tests.Mock;
-using DecisionTree.Tests.Model;
+using DecisionTree.Tests.TestData;
 using DecisionTree.Tests.Tree;
 using Xunit;
 
@@ -18,18 +17,22 @@ namespace DecisionTree.Tests
     [UseApprovalSubdirectory("./approvals")]
     public class DecisionTreeTest
     {
-        [Fact]
-        public void DecisionTree_Should_Define_Graph()
+        [Theory]
+        [MemberData(nameof(DecisionTreeTestData.GraphTestDataList), MemberType = typeof(DecisionTreeTestData))]
+        public void DecisionTree_Should_Define_Default_Graph(string title, GraphOptions options)
         {
             //Arrange
             var tree = new ProjectDecisionTree();
 
             //Act
-            var graphDefinition = tree.ConvertToDotGraph();
+            var graphDefinition = tree.ConvertToDotGraph(options);
 
             //Assert
+            NamerFactory.AdditionalInformation = title;
             Approvals.VerifyHtml(graphDefinition);
         }
+
+
 
         [Fact]
         public void DecisionTree_Fake_Should_Throw()
@@ -58,8 +61,8 @@ namespace DecisionTree.Tests
         }
 
         [Theory]
-        [MemberData(nameof(DecisionTreeDtoList))]
-        public void DecisionTree_Should_Follow_Paths(int counter, ItProjectDecisionDto dto)
+        [MemberData(nameof(DecisionTreeTestData.TreeTestDataList), MemberType = typeof(DecisionTreeTestData))]
+        public void DecisionTree_Should_Follow_Paths(string title, ItProjectDecisionDto dto)
         {
             //Arrange
             var tree = new ProjectDecisionTree();
@@ -68,63 +71,8 @@ namespace DecisionTree.Tests
             tree.GetTrunk().Evaluate(dto);
 
             //Assert
-            NamerFactory.AdditionalInformation = counter.ToString();
+            NamerFactory.AdditionalInformation = title;
             Approvals.VerifyJson(JsonSerializer.Serialize(dto));
         }
-
-        public static IEnumerable<object[]> DecisionTreeDtoList =>
-           new List<object[]>
-           {
-               CreateDtoTestData(0,
-                   new ItProject
-                   {
-                       ItemsToDo = 0
-                   }),
-               CreateDtoTestData(1,
-                   new ItProject
-                   {
-                       ItemsToDo = 5,
-                       IsOnHold = true
-                   }),
-               CreateDtoTestData(2,
-                   new ItProject
-                   {
-                       ItemsToDo = 5,
-                       Type = ProjectType.Internal
-                   }),
-               CreateDtoTestData(3,
-                   new ItProject
-                   {
-                       ItemsToDo = 15,
-                       Type = ProjectType.Financial,
-                       TimeToDeadline = TimeSpan.FromDays(1)
-                   }),
-               CreateDtoTestData(4,
-                   new ItProject
-                   {
-                       ItemsToDo = 5,
-                       Type = ProjectType.Financial,
-                       BudgetRemaining = 1000
-                   }),
-               CreateDtoTestData(5,
-                   new ItProject
-                   {
-                       ItemsToDo = 15,
-                       Type = ProjectType.Financial,
-                       TimeToDeadline = TimeSpan.FromDays(10),
-                       BudgetRemaining = 1000
-                   }),
-               CreateDtoTestData(6,
-                   new ItProject
-                   {
-                       ItemsToDo = 15,
-                       Type = ProjectType.Financial,
-                       TimeToDeadline = TimeSpan.FromDays(10),
-                       BudgetRemaining = 1000000
-                   })
-           };
-
-        private static object[] CreateDtoTestData(int counter, ItProject project) =>
-            new object[] {counter, new ItProjectDecisionDto { Project = project } };
     }
 }

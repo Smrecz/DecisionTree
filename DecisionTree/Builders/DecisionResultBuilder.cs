@@ -1,5 +1,4 @@
 ﻿using DecisionTree.Decisions;
-using DecisionTree.Exceptions;
 using System;
 using System.Linq.Expressions;
 using DecisionTree.Builders.Interface;
