@@ -7,8 +7,9 @@ namespace DecisionTree.Decisions
 {
     public class DecisionNode<T, TResult> : IDecision<T>
     {
-        public DecisionNode(Expression<Func<T, TResult>> condition, Dictionary<TResult, IDecision<T>> paths, IDecision<T> defaultPath = null, Expression<Func<T, T>> action = null)
+        public DecisionNode(string title, Expression<Func<T, TResult>> condition, Dictionary<TResult, IDecision<T>> paths, IDecision<T> defaultPath = null, Expression<Func<T, T>> action = null)
         {
+            Title = title;
             Condition = condition;
             Paths = paths;
             DefaultPath = defaultPath;
@@ -17,6 +18,7 @@ namespace DecisionTree.Decisions
             _actionFunc = action?.Compile();
         }
 
+        public string Title { get; }
         public IDecision<T> DefaultPath { get; }
         public Dictionary<TResult, IDecision<T>> Paths { get; }
         public Expression<Func<T, TResult>> Condition { get; }

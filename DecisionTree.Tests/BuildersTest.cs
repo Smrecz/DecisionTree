@@ -9,19 +9,19 @@ namespace DecisionTree.Tests
     public class BuildersTest
     {
         private static readonly DecisionResult<BoolDto> TrueResult = 
-            new DecisionResultBuilder<BoolDto>()
+            DecisionResultBuilder<BoolDto>.Create()
             .AddTitle("True result")
             .AddAction(boolDto => boolDto.SetResult(true))
             .Build();
 
         private static readonly DecisionResult<BoolDto> FalseResult =
-            new DecisionResultBuilder<BoolDto>()
+            DecisionResultBuilder<BoolDto>.Create()
             .AddTitle("False result")
             .AddAction(boolDto => boolDto.SetResult(false))
             .Build();
 
         private static readonly DecisionResult<BoolDto> DefaultResult =
-            new DecisionResultBuilder<BoolDto>()
+            DecisionResultBuilder<BoolDto>.Create()
             .AddTitle("False result")
             .AddAction(boolDto => boolDto.SetResult(false))
             .Build();
@@ -47,10 +47,11 @@ namespace DecisionTree.Tests
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNodeBuilder<BoolDto, bool>()
+            var decisionNode = DecisionNodeBuilder<BoolDto, bool>.Create()
+                .AddTitle("Title")
+                .AddCondition(boolDto => boolDto.BoolProperty)
                 .AddPath(true, TrueResult)
                 .AddPath(false, FalseResult)
-                .AddCondition(boolDto => boolDto.BoolProperty)
                 .Build();
 
             //Act
@@ -69,10 +70,12 @@ namespace DecisionTree.Tests
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNodeBuilder<BoolDto, bool>()
+            var decisionNode = DecisionNodeBuilder<BoolDto, bool>
+                .Create()
+                .AddTitle("Title")
+                .AddCondition(boolDto => boolDto.BoolProperty)
                 .AddPath(true, TrueResult)
                 .AddDefault(DefaultResult)
-                .AddCondition(boolDto => boolDto.BoolProperty)
                 .Build();
 
             //Act
@@ -91,9 +94,11 @@ namespace DecisionTree.Tests
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNodeBuilder<BoolDto, bool>()
-                .AddPath(true, TrueResult)
+            var decisionNode = DecisionNodeBuilder<BoolDto, bool>
+                .Create()
+                .AddTitle("Title")
                 .AddCondition(boolDto => boolDto.BoolProperty)
+                .AddPath(true, TrueResult)
                 .Build();
 
             //Act
@@ -102,47 +107,6 @@ namespace DecisionTree.Tests
 
             //Assert
             Assert.Throws<MissingDecisionPathException>(FalseAction);
-        }
-
-        [Fact]
-        public void Builder_DecisionNode_Throw_Missing_Condition()
-        {
-            //Arrange
-
-            //Act
-            static void BuildAction() => new DecisionNodeBuilder<BoolDto, bool>()
-                .AddPath(true, TrueResult)
-                .Build();
-
-            //Assert
-            Assert.Throws<MissingBuilderConfigException>(BuildAction);
-        }
-
-        [Fact]
-        public void Builder_DecisionNode_Throw_Missing_Path()
-        {
-            //Arrange
-
-            //Act
-            static void BuildAction() => new DecisionNodeBuilder<BoolDto, bool>()
-                .AddCondition(boolDto => boolDto.BoolProperty)
-                .Build();
-
-            //Assert
-            Assert.Throws<MissingBuilderConfigException>(BuildAction);
-        }
-
-        [Fact]
-        public void Builder_ResultNode_Throw_Missing_Config()
-        {
-            //Arrange
-
-            //Act
-            static void BuildAction() => new DecisionResultBuilder<BoolDto>()
-                .Build();
-
-            //Assert
-            Assert.Throws<MissingBuilderConfigException>(BuildAction);
         }
     }
 }

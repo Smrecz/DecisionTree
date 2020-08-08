@@ -2,31 +2,33 @@
 using DecisionTree.Exceptions;
 using System;
 using System.Linq.Expressions;
+using DecisionTree.Builders.Interface;
 
 namespace DecisionTree.Builders
 {
-    public class DecisionResultBuilder<T>
+    public sealed class DecisionResultBuilder<T> 
+        : IResultTitle<T>, IResultBuild<T>
     {
         private string _title;
         private Expression<Func<T, T>> _action;
 
-        public DecisionResultBuilder<T> AddTitle(string title)
+        private DecisionResultBuilder() { }
+
+        public static IResultTitle<T> Create() => new DecisionResultBuilder<T>();
+
+        public IResultBuild<T> AddTitle(string title)
         {
             _title = title;
             return this;
         }
 
-        public DecisionResultBuilder<T> AddAction(Expression<Func<T, T>> action)
+        public IResultBuild<T> AddAction(Expression<Func<T, T>> action)
         {
             _action = action;
             return this;
         }
 
-        public DecisionResult<T> Build()
-        {
-            if (_title == null)
-                throw new MissingBuilderConfigException($"{nameof(_title)} has to be configured.");
-            return new DecisionResult<T>(_title, _action);
-        }
+        public DecisionResult<T> Build() => 
+            new DecisionResult<T>(_title, _action);
     }
 }

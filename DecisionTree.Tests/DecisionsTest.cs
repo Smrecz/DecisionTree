@@ -51,7 +51,7 @@ namespace DecisionTree.Tests
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNode<BoolDto, bool>(condition, paths);
+            var decisionNode = new DecisionNode<BoolDto, bool>("Title", condition, paths);
 
             //Act
             decisionNode.Evaluate(trueDto);
@@ -75,7 +75,7 @@ namespace DecisionTree.Tests
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNode<BoolDto, bool>(condition, paths, DefaultResult);
+            var decisionNode = new DecisionNode<BoolDto, bool>("Title", condition, paths, DefaultResult);
 
             //Act
             decisionNode.Evaluate(trueDto);
@@ -99,7 +99,7 @@ namespace DecisionTree.Tests
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNode<BoolDto, bool>(condition, paths);
+            var decisionNode = new DecisionNode<BoolDto, bool>("Title", condition, paths);
 
             //Act
             decisionNode.Evaluate(trueDto);
