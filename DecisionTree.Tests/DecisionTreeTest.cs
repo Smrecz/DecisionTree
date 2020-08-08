@@ -19,7 +19,7 @@ namespace DecisionTree.Tests
     {
         [Theory]
         [MemberData(nameof(DecisionTreeTestData.GraphTestDataList), MemberType = typeof(DecisionTreeTestData))]
-        public void DecisionTree_Should_Define_Default_Graph(string title, GraphOptions options)
+        public void DecisionTree_Should_Define_Graph(string title, GraphOptions options)
         {
             //Arrange
             var tree = new ProjectDecisionTree();
@@ -31,8 +31,6 @@ namespace DecisionTree.Tests
             NamerFactory.AdditionalInformation = title;
             Approvals.VerifyHtml(graphDefinition);
         }
-
-
 
         [Fact]
         public void DecisionTree_Fake_Should_Throw()

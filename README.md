@@ -20,7 +20,7 @@ You can use on-line tools like for example: https://dreampuf.github.io/GraphvizO
 Check out [ProjectDecisionTree.cs](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/Tree/ProjectDecisionTree.cs) as an example of defined decision tree.<br>
 Check out [DecisionTreeTest.cs](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/DecisionTreeTest.cs) for tree usage.<br>
 
-Below is a graph from generated DOT definition ([DOT](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/approvals/DecisionTreeTest.DecisionTree_Should_Define_Graph.approved.html)):<br>
+Below is an example of graph from generated DOT definition ([DOT](https://github.com/Smrecz/DecisionTree/blob/master/DecisionTree.Tests/approvals/DecisionTreeTest.DecisionTree_Should_Define_Graph.approved.html)):<br>
 
 ![ProjectDecisionTree Graph](https://github.com/Smrecz/DecisionTree/blob/master/ProjectDecisionTree.png)
 

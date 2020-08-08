@@ -30,7 +30,7 @@ namespace DecisionTree.DotTreeExtensions
 
         public static string Print<T>(this IDecision<T> decision, bool useCounter, string key = null)
         {
-            _internalCounter = useCounter ? (int?) null : 0;
+            _internalCounter = useCounter ? 0 : (int?)null;
 
             return decision.InvokeChildPrint(key);
         }
