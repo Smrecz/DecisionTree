@@ -8,18 +8,18 @@ using DecisionTree.Exceptions;
 
 namespace DecisionTree.DotTreeExtensions
 {
-    public static class NodePrintableExtensions
+    public static class DecisionExtensions
     {
         private static readonly MethodInfo PrintNodeMethod =
-                    typeof(NodePrintableExtensions)
+                    typeof(DecisionExtensions)
                     .GetMethod(nameof(PrintNode));
 
         private static readonly MethodInfo PrintResultMethod =
-                    typeof(NodePrintableExtensions)
+                    typeof(DecisionExtensions)
                     .GetMethod(nameof(PrintResult));
 
         private static readonly MethodInfo PrintActionMethod =
-            typeof(NodePrintableExtensions)
+            typeof(DecisionExtensions)
                 .GetMethod(nameof(PrintAction));
 
         private static readonly string DecisionNodeInterface = typeof(IDecisionNode<,>).Name;
@@ -31,16 +31,15 @@ namespace DecisionTree.DotTreeExtensions
         private const string ActionPartRegexPattern = "(?=\\.[^\\)]+?\\([^\\)]+\\))";
         private const string FontStyle = "color=\"white\"";
         private const string Separator = "<tr><td bgcolor=\"white\" cellpadding=\"1\"></td></tr>";
-        private static int? _internalCounter = 0;
 
         public static string Print<T>(this IDecision<T> decision, bool useCounter, string key = null)
         {
-            _internalCounter = useCounter ? 0 : (int?)null;
+            var nodeId = useCounter ? new NodeId() : null;
 
-            return decision.InvokeChildPrint(key);
+            return decision.InvokeChildPrint(nodeId, key);
         }
 
-        private static string InvokeChildPrint<T>(this IDecision<T> decision, string key = null)
+        private static string InvokeChildPrint<T>(this IDecision<T> decision, NodeId nodeId, string key = null)
         {
             var genericTypes = decision.GetType().GenericTypeArguments;
             var implementedInterfaces = decision
@@ -49,9 +48,9 @@ namespace DecisionTree.DotTreeExtensions
                 .Select(type => type.Name)
                 .ToArray();
 
-            _internalCounter++;
+            nodeId?.Increment();
 
-            var printParams = new object[] { decision, _internalCounter, key };
+            var printParams = new object[] { decision, nodeId, key };
 
             if (implementedInterfaces.Contains(DecisionResultInterface))
                 return (string)PrintResultMethod
@@ -71,21 +70,21 @@ namespace DecisionTree.DotTreeExtensions
             throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
         }
 
-        public static string PrintNode<T, TResult>(this IDecisionNode<T, TResult> node, int? counter, string label = null)
+        public static string PrintNode<T, TResult>(this IDecisionNode<T, TResult> node, NodeId nodeId, string label = null)
         {
             var printResult = string.Empty;
 
             var condition = node.Condition.ToString();
-            var titleWithCounter = AddCounter(counter, node.Title);
+            var titleWithCounter = AddCounter(nodeId?.Counter, node.Title);
 
             if (label != null)
                 printResult += $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}";
 
             foreach (var (key, decision) in node.Paths)
-                printResult += $"\"{titleWithCounter}\" -> {InvokeChildPrint(decision, key.ToString())}";
+                printResult += $"\"{titleWithCounter}\" -> {decision.InvokeChildPrint(nodeId, key.ToString())}";
 
             if (node.DefaultPath != null)
-                printResult += $"\"{titleWithCounter}\" -> {InvokeChildPrint(node.DefaultPath, DefaultOptionText)}";
+                printResult += $"\"{titleWithCounter}\" -> {node.DefaultPath.InvokeChildPrint(nodeId, DefaultOptionText)}";
 
             printResult += node.Action != null
                 ? GetHtmlTable(node.Action.ToString(), condition, titleWithCounter, TitleStyle.DecisionAction)
@@ -94,9 +93,9 @@ namespace DecisionTree.DotTreeExtensions
             return printResult;
         }
 
-        public static string PrintResult<T>(this IDecisionResult<T> node, int? counter, string label)
+        public static string PrintResult<T>(this IDecisionResult<T> node, NodeId nodeId, string label)
         {
-            var titleWithCounter = AddCounter(counter, node.Title);
+            var titleWithCounter = AddCounter(nodeId?.Counter, node.Title);
 
             var actionDescription = node.Action != null
                 ? GetHtmlTable(node.Action.ToString(), null, titleWithCounter, TitleStyle.ResultAction)
@@ -105,17 +104,17 @@ namespace DecisionTree.DotTreeExtensions
             return $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
         }
 
-        public static string PrintAction<T>(this IDecisionAction<T> node, int? counter, string label)
+        public static string PrintAction<T>(this IDecisionAction<T> node, NodeId nodeId, string label)
         {
             var printResult = string.Empty;
 
-            var titleWithCounter = AddCounter(counter, node.Title);
+            var titleWithCounter = AddCounter(nodeId?.Counter, node.Title);
 
             if (label != null)
                 printResult += $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}";
 
             if (node.Path != null)
-                printResult += $"\"{titleWithCounter}\" -> {InvokeChildPrint(node.Path, label)}";
+                printResult += $"\"{titleWithCounter}\" -> {node.Path.InvokeChildPrint(nodeId, label)}";
 
             printResult += GetHtmlTable(node.Action.ToString(), null, titleWithCounter, TitleStyle.Action);
 
