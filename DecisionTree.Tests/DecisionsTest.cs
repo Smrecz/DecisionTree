@@ -2,23 +2,34 @@ using DecisionTree.Decisions;
 using DecisionTree.Exceptions;
 using DecisionTree.Tests.Dto;
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
+using DecisionTree.Builders;
 using Xunit;
 
 namespace DecisionTree.Tests
 {
     public class DecisionsTest
     {
-        private static readonly DecisionResult<BoolDto> TrueResult = 
-            new DecisionResult<BoolDto>("True result", boolDto => boolDto.SetResult(true));
+        private static readonly DecisionResult<BoolDto> TrueResult =
+            DecisionResultBuilder<BoolDto>
+                .Create()
+                .AddTitle("True result")
+                .AddAction(boolDto => boolDto.SetResult(true))
+                .Build();
 
-        private static readonly DecisionResult<BoolDto> FalseResult = 
-            new DecisionResult<BoolDto>("False result", boolDto => boolDto.SetResult(false));
+        private static readonly DecisionResult<BoolDto> FalseResult =
+            DecisionResultBuilder<BoolDto>
+                .Create()
+                .AddTitle("False result")
+                .AddAction(boolDto => boolDto.SetResult(false))
+                .Build();
 
-        private static readonly DecisionResult<BoolDto> DefaultResult = 
-            new DecisionResult<BoolDto>("False result", boolDto => boolDto.SetResult(false));
-
+        private static readonly DecisionResult<BoolDto> DefaultResult =
+            DecisionResultBuilder<BoolDto>
+                .Create()
+                .AddTitle("False result")
+                .AddAction(boolDto => boolDto.SetResult(false))
+                .Build();
 
         [Fact]
         public void ResultNode_Should_Evaluate_Action()
@@ -28,7 +39,12 @@ namespace DecisionTree.Tests
 
             var trueDto = new BoolDto(true);
 
-            var resultNode = new DecisionResult<BoolDto>("Result", action);
+            var resultNode =
+                DecisionResultBuilder<BoolDto>
+                    .Create()
+                    .AddTitle("Result")
+                    .AddAction(action)
+                    .Build();
 
             //Act
             resultNode.Evaluate(trueDto);
@@ -41,11 +57,15 @@ namespace DecisionTree.Tests
         public void ActionNode_Should_Evaluate_Action()
         {
             //Arrange
-            Expression<Func<BoolDto, BoolDto>> action = boolDto => boolDto.SetResult(true);
-
             var trueDto = new BoolDto(true);
 
-            var resultNode = new DecisionAction<BoolDto>("Result", action, TrueResult);
+            var resultNode =
+                DecisionActionBuilder<BoolDto>
+                    .Create()
+                    .AddTitle("Result")
+                    .AddAction(boolDto => boolDto.SetResult(true))
+                    .AddPath(TrueResult)
+                    .Build();
 
             //Act
             resultNode.Evaluate(trueDto);
@@ -58,17 +78,17 @@ namespace DecisionTree.Tests
         public void DecisionNode_Should_Evaluate_Proper_Path()
         {
             //Arrange
-            Expression<Func<BoolDto, bool>> condition = boolDto => boolDto.BoolProperty;       
-            var paths = new Dictionary<bool, IDecision<BoolDto>>
-            {
-                {true, TrueResult },
-                {false, FalseResult }
-            };
-
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNode<BoolDto, bool>("Title", condition, paths);
+            var decisionNode =
+                DecisionNodeBuilder<BoolDto, bool>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddCondition(boolDto => boolDto.BoolProperty)
+                    .AddPath(true, TrueResult)
+                    .AddPath(false, FalseResult)
+                    .Build();
 
             //Act
             decisionNode.Evaluate(trueDto);
@@ -83,16 +103,17 @@ namespace DecisionTree.Tests
         public void DecisionNode_Should_Default_Path()
         {
             //Arrange
-            Expression<Func<BoolDto, bool>> condition = boolDto => boolDto.BoolProperty;
-            var paths = new Dictionary<bool, IDecision<BoolDto>>
-            {
-                {true, TrueResult }
-            };
-
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNode<BoolDto, bool>("Title", condition, paths, DefaultResult);
+            var decisionNode =
+                DecisionNodeBuilder<BoolDto, bool>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddCondition(boolDto => boolDto.BoolProperty)
+                    .AddPath(true, TrueResult)
+                    .AddDefault(DefaultResult)
+                    .Build();
 
             //Act
             decisionNode.Evaluate(trueDto);
@@ -107,16 +128,16 @@ namespace DecisionTree.Tests
         public void DecisionNode_Throw_Not_Defined_Path()
         {
             //Arrange
-            Expression<Func<BoolDto, bool>> condition = boolDto => boolDto.BoolProperty;
-            var paths = new Dictionary<bool, IDecision<BoolDto>>
-            {
-                {true, TrueResult }
-            };
-
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
-            var decisionNode = new DecisionNode<BoolDto, bool>("Title", condition, paths);
+            var decisionNode =
+                DecisionNodeBuilder<BoolDto, bool>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddCondition(boolDto => boolDto.BoolProperty)
+                    .AddPath(true, TrueResult)
+                    .Build();
 
             //Act
             decisionNode.Evaluate(trueDto);

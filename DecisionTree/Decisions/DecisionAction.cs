@@ -5,7 +5,7 @@ namespace DecisionTree.Decisions
 {
     public class DecisionAction<T> : IDecision<T>
     {
-        public DecisionAction(string title, Expression<Func<T, T>> action, IDecision<T> path)
+        internal DecisionAction(string title, Expression<Func<T, T>> action, IDecision<T> path)
         {
             Action = action;
             _actionFunc = action?.Compile();
