@@ -31,6 +31,4 @@ If you would like to support my work by making a Donation (€10), you are welco
 # TODO
 <b>ALL SUGGESTIONS ARE WELCOME!</b>
 <br>
-<br>
-* Implement Action nodes to just apply action without changing the path
 * More documentation...
