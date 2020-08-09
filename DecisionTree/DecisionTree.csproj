@@ -14,8 +14,8 @@
     <Copyright>Piotr Smreczynski</Copyright>
     <Description>Decision Tree + Visualisation
 Lightweight framework to define decision trees via configuration with option to generate graph definition in DOT language.</Description>
-    <PackageReleaseNotes>Introduced DecisionAction node to apply action without changing the path.</PackageReleaseNotes>
-    <Version>1.0.4</Version>
+    <PackageReleaseNotes>Improved extendability and performance</PackageReleaseNotes>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
