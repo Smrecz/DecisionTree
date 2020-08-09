@@ -24,5 +24,17 @@ namespace DecisionTree.Tests.Dto
             Project.IsOnHold = value;
             return this;
         }
+
+        public ItProjectDecisionDto SetBudgetRemaining(int value)
+        {
+            Project.BudgetRemaining = value;
+            return this;
+        }
+
+        public ItProjectDecisionDto SetItemsToDo(int value)
+        {
+            Project.ItemsToDo = value;
+            return this;
+        }
     }
 }

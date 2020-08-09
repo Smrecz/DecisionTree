@@ -65,12 +65,22 @@ namespace DecisionTree.Tests.Tree
                 .AddPath(false, BudgetDecision)
                 .Build();
 
+        private static readonly DecisionAction<ItProjectDecisionDto> ResetInternalAction =
+            DecisionActionBuilder<ItProjectDecisionDto>
+                .Create()
+                .AddTitle(nameof(ResetInternalAction))
+                .AddAction(dto => dto
+                    .SetItemsToDo(0)
+                    .SetBudgetRemaining(0))
+                .AddPath(DoNothingResult)
+                .Build();
+
         private static readonly DecisionNode<ItProjectDecisionDto, ProjectType> ProjectTypeDecision =
             DecisionNodeBuilder<ItProjectDecisionDto, ProjectType>
                 .Create()
                 .AddTitle(nameof(ProjectTypeDecision))
                 .AddCondition(dto => dto.Project.Type)
-                .AddPath(ProjectType.Internal, DoNothingResult)
+                .AddPath(ProjectType.Internal, ResetInternalAction)
                 .AddDefault(ToDoDecision)
                 .Build();
 

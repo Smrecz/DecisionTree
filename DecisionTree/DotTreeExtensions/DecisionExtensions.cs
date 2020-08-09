@@ -18,8 +18,13 @@ namespace DecisionTree.DotTreeExtensions
                     typeof(NodePrintableExtensions)
                     .GetMethod(nameof(PrintResult));
 
+        private static readonly MethodInfo PrintActionMethod =
+            typeof(NodePrintableExtensions)
+                .GetMethod(nameof(PrintAction));
+
         private static readonly string DecisionNodeName = typeof(DecisionNode<,>).Name;
         private static readonly string DecisionResultName = typeof(DecisionResult<>).Name;
+        private static readonly string DecisionActionName = typeof(DecisionAction<>).Name;
 
         private const string DefaultOptionText = "#default_option";
         private const string ActionCellStyle = "align=\"left\"";
@@ -51,6 +56,11 @@ namespace DecisionTree.DotTreeExtensions
 
             if (decisionName == DecisionNodeName)
                 return (string)PrintNodeMethod
+                    .MakeGenericMethod(genericTypes)
+                    .Invoke(decision, printParams);
+
+            if (decisionName == DecisionActionName)
+                return (string)PrintActionMethod
                     .MakeGenericMethod(genericTypes)
                     .Invoke(decision, printParams);
 
@@ -92,6 +102,23 @@ namespace DecisionTree.DotTreeExtensions
             return $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
         }
 
+        public static string PrintAction<T>(this DecisionAction<T> node, int? counter, string label)
+        {
+            var printResult = string.Empty;
+
+            var titleWithCounter = AddCounter(counter, node.Title);
+
+            if (label != null)
+                printResult += $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}";
+
+            if (node.Path != null)
+                printResult += $"\"{titleWithCounter}\" -> {InvokeChildPrint(node.Path, label)}";
+
+            printResult += GetHtmlTable(node.Action.ToString(), null, titleWithCounter, TitleStyle.Action);
+
+            return printResult;
+        }
+
         private static string GetHtmlTable(string action, string condition, string title, TitleStyle titleStyle)
         {
             var style = GetTitleStyle(titleStyle);
@@ -107,7 +134,7 @@ namespace DecisionTree.DotTreeExtensions
             }
 
             var actionParts = Regex
-                .Split(action, ActionPartRegexPattern)
+                .Split(EscapeQuotation(action), ActionPartRegexPattern)
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToList();
 
@@ -173,8 +200,9 @@ namespace DecisionTree.DotTreeExtensions
             {
                 TitleStyle.Decision => "#17a2b8",
                 TitleStyle.DecisionAction => "#007bff",
-                TitleStyle.Result => "#6c757d",
+                TitleStyle.Result => "#343a40",
                 TitleStyle.ResultAction => "#28a745",
+                TitleStyle.Action => "#6c757d",
                 _ => throw new ArgumentOutOfRangeException(nameof(titleStyle), titleStyle, null)
             };
 

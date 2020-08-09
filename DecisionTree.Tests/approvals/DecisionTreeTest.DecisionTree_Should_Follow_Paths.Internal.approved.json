@@ -3,7 +3,7 @@
         "Type": 1,
         "IsOnHold": false,
         "IsBudgetReviewed": false,
-        "ItemsToDo": 5,
+        "ItemsToDo": 0,
         "BudgetRemaining": 0,
         "TimeToDeadline": {
             "Ticks": 0,

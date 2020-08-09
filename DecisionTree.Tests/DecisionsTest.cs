@@ -38,6 +38,23 @@ namespace DecisionTree.Tests
         }
 
         [Fact]
+        public void ActionNode_Should_Evaluate_Action()
+        {
+            //Arrange
+            Expression<Func<BoolDto, BoolDto>> action = boolDto => boolDto.SetResult(true);
+
+            var trueDto = new BoolDto(true);
+
+            var resultNode = new DecisionAction<BoolDto>("Result", action, TrueResult);
+
+            //Act
+            resultNode.Evaluate(trueDto);
+
+            //Assert
+            Assert.True(trueDto.Result);
+        }
+
+        [Fact]
         public void DecisionNode_Should_Evaluate_Proper_Path()
         {
             //Arrange
