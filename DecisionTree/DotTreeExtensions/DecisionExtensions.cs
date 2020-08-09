@@ -71,8 +71,7 @@ namespace DecisionTree.DotTreeExtensions
         {
             var printResult = string.Empty;
 
-            //Escape quotation marks as they are special symbols in DOT language.
-            var condition = EscapeQuotation(node.Condition.ToString());
+            var condition = node.Condition.ToString();
             var titleWithCounter = AddCounter(counter, node.Title);
 
             if (label != null)
@@ -134,7 +133,7 @@ namespace DecisionTree.DotTreeExtensions
             }
 
             var actionParts = Regex
-                .Split(EscapeQuotation(action), ActionPartRegexPattern)
+                .Split(action, ActionPartRegexPattern)
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToList();
 
@@ -205,9 +204,5 @@ namespace DecisionTree.DotTreeExtensions
                 TitleStyle.Action => "#6c757d",
                 _ => throw new ArgumentOutOfRangeException(nameof(titleStyle), titleStyle, null)
             };
-
-        private static string EscapeQuotation(string value) =>
-            value.Replace("\"", "\\\"");
-
     }
 }
