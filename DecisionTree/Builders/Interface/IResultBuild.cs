@@ -7,6 +7,6 @@ namespace DecisionTree.Builders.Interface
     public interface IResultBuild<T>
     {
         IResultBuild<T> AddAction(Expression<Func<T, T>> action);
-        DecisionResult<T> Build();
+        IDecisionResult<T> Build();
     }
 }

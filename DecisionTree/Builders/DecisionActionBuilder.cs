@@ -34,7 +34,7 @@ namespace DecisionTree.Builders
             return this;
         }
 
-        public DecisionAction<T> Build() => 
+        public IDecisionAction<T> Build() => 
             new DecisionAction<T>(_title, _action, _path);
     }
 }

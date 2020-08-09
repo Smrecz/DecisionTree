@@ -8,19 +8,19 @@ namespace DecisionTree.Tests
 {
     public class BuildersTest
     {
-        private static readonly DecisionResult<BoolDto> TrueResult = 
+        private static readonly IDecisionResult<BoolDto> TrueResult = 
             DecisionResultBuilder<BoolDto>.Create()
             .AddTitle("True result")
             .AddAction(boolDto => boolDto.SetResult(true))
             .Build();
 
-        private static readonly DecisionResult<BoolDto> FalseResult =
+        private static readonly IDecisionResult<BoolDto> FalseResult =
             DecisionResultBuilder<BoolDto>.Create()
             .AddTitle("False result")
             .AddAction(boolDto => boolDto.SetResult(false))
             .Build();
 
-        private static readonly DecisionResult<BoolDto> DefaultResult =
+        private static readonly IDecisionResult<BoolDto> DefaultResult =
             DecisionResultBuilder<BoolDto>.Create()
             .AddTitle("False result")
             .AddAction(boolDto => boolDto.SetResult(false))

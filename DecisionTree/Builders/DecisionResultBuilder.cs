@@ -27,7 +27,7 @@ namespace DecisionTree.Builders
             return this;
         }
 
-        public DecisionResult<T> Build() => 
+        public IDecisionResult<T> Build() => 
             new DecisionResult<T>(_title, _action);
     }
 }

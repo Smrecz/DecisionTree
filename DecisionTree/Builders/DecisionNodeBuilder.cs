@@ -49,7 +49,7 @@ namespace DecisionTree.Builders
             return this;
         }
 
-        public DecisionNode<T, TResult> Build() => 
+        public IDecisionNode<T, TResult> Build() => 
             new DecisionNode<T, TResult>(_title, _condition, _paths, _defaultDecision, _action);
     }
 }

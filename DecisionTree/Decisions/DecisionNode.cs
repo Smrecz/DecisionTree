@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace DecisionTree.Decisions
 {
-    public class DecisionNode<T, TResult> : IDecision<T>
+    public class DecisionNode<T, TResult> : IDecisionNode<T, TResult>
     {
         internal DecisionNode(
             string title, 

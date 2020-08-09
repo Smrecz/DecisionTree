@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace DecisionTree.Decisions
 {
-    public class DecisionResult<T> : IDecision<T>
+    public class DecisionResult<T> : IDecisionResult<T>
     {
         internal DecisionResult(string title, Expression<Func<T, T>> action = null)
         {

@@ -22,9 +22,9 @@ namespace DecisionTree.DotTreeExtensions
             typeof(NodePrintableExtensions)
                 .GetMethod(nameof(PrintAction));
 
-        private static readonly string DecisionNodeName = typeof(DecisionNode<,>).Name;
-        private static readonly string DecisionResultName = typeof(DecisionResult<>).Name;
-        private static readonly string DecisionActionName = typeof(DecisionAction<>).Name;
+        private static readonly string DecisionNodeInterface = typeof(IDecisionNode<,>).Name;
+        private static readonly string DecisionResultInterface = typeof(IDecisionResult<>).Name;
+        private static readonly string DecisionActionInterface = typeof(IDecisionAction<>).Name;
 
         private const string DefaultOptionText = "#default_option";
         private const string ActionCellStyle = "align=\"left\"";
@@ -43,23 +43,27 @@ namespace DecisionTree.DotTreeExtensions
         private static string InvokeChildPrint<T>(this IDecision<T> decision, string key = null)
         {
             var genericTypes = decision.GetType().GenericTypeArguments;
-            var decisionName = decision.GetType().Name;
+            var implementedInterfaces = decision
+                .GetType()
+                .GetInterfaces()
+                .Select(type => type.Name)
+                .ToArray();
 
             _internalCounter++;
 
             var printParams = new object[] { decision, _internalCounter, key };
 
-            if (decisionName == DecisionResultName)
+            if (implementedInterfaces.Contains(DecisionResultInterface))
                 return (string)PrintResultMethod
                     .MakeGenericMethod(genericTypes)
                     .Invoke(decision, printParams);
 
-            if (decisionName == DecisionNodeName)
+            if (implementedInterfaces.Contains(DecisionNodeInterface))
                 return (string)PrintNodeMethod
                     .MakeGenericMethod(genericTypes)
                     .Invoke(decision, printParams);
 
-            if (decisionName == DecisionActionName)
+            if (implementedInterfaces.Contains(DecisionActionInterface))
                 return (string)PrintActionMethod
                     .MakeGenericMethod(genericTypes)
                     .Invoke(decision, printParams);
@@ -67,7 +71,7 @@ namespace DecisionTree.DotTreeExtensions
             throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
         }
 
-        public static string PrintNode<T, TResult>(this DecisionNode<T, TResult> node, int? counter, string label = null)
+        public static string PrintNode<T, TResult>(this IDecisionNode<T, TResult> node, int? counter, string label = null)
         {
             var printResult = string.Empty;
 
@@ -90,7 +94,7 @@ namespace DecisionTree.DotTreeExtensions
             return printResult;
         }
 
-        public static string PrintResult<T>(this DecisionResult<T> node, int? counter, string label)
+        public static string PrintResult<T>(this IDecisionResult<T> node, int? counter, string label)
         {
             var titleWithCounter = AddCounter(counter, node.Title);
 
@@ -101,7 +105,7 @@ namespace DecisionTree.DotTreeExtensions
             return $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
         }
 
-        public static string PrintAction<T>(this DecisionAction<T> node, int? counter, string label)
+        public static string PrintAction<T>(this IDecisionAction<T> node, int? counter, string label)
         {
             var printResult = string.Empty;
 
