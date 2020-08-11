@@ -6,7 +6,7 @@ using DecisionTree.Builders.Interface;
 
 namespace DecisionTree.Builders
 {
-    public sealed class DecisionNodeBuilder<T, TResult> 
+    public sealed class DecisionNodeBuilder<T, TResult>
         : INodeTitle<T, TResult>, INodeCondition<T, TResult>, INodeBuild<T, TResult>
     {
         private readonly Dictionary<TResult, IDecision<T>> _paths = new Dictionary<TResult, IDecision<T>>();
@@ -43,13 +43,25 @@ namespace DecisionTree.Builders
             return this;
         }
 
+        public INodeBuild<T, TResult> AddPath(TResult key, IDecision<T> path, IActionPath<T> actionBeforePath)
+        {
+            var action = actionBeforePath.AddPath(path).Build();
+
+            if (action is DecisionAction<T> decisionAction)
+                decisionAction.ChangeTitle($"{key} {_title} - {action.Title}");
+
+            _paths.Add(key, action);
+
+            return this;
+        }
+
         public INodeBuild<T, TResult> AddDefault(IDecision<T> defaultDecision)
         {
             _defaultDecision = defaultDecision;
             return this;
         }
 
-        public IDecisionNode<T, TResult> Build() => 
+        public IDecisionNode<T, TResult> Build() =>
             new DecisionNode<T, TResult>(_title, _condition, _paths, _defaultDecision, _action);
     }
 }

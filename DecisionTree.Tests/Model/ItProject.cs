@@ -10,5 +10,6 @@ namespace DecisionTree.Tests.Model
         public int ItemsToDo { get; set; }
         public int BudgetRemaining { get; set; }
         public TimeSpan TimeToDeadline { get; set; }
+        public bool SendNotification { get; set; }
     }
 }

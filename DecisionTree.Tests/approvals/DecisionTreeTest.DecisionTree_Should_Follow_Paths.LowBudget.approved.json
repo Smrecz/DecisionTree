@@ -17,7 +17,8 @@
             "TotalMilliseconds": 0,
             "TotalMinutes": 0,
             "TotalSeconds": 0
-        }
+        },
+        "SendNotification": true
     },
     "Result": "Not enough funds."
 }

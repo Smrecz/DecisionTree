@@ -17,7 +17,8 @@
             "TotalMilliseconds": 86400000,
             "TotalMinutes": 1440,
             "TotalSeconds": 86400
-        }
+        },
+        "SendNotification": true
     },
     "Result": "Timeline reevaluation needed."
 }

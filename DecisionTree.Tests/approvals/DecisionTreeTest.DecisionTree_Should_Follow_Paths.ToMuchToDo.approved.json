@@ -17,7 +17,8 @@
             "TotalMilliseconds": 864000000,
             "TotalMinutes": 14400,
             "TotalSeconds": 864000
-        }
+        },
+        "SendNotification": true
     },
     "Result": "Not enough funds."
 }

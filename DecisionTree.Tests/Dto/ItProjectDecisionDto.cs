@@ -36,5 +36,11 @@ namespace DecisionTree.Tests.Dto
             Project.ItemsToDo = value;
             return this;
         }
+
+        public ItProjectDecisionDto SetSendNotification(bool value)
+        {
+            Project.SendNotification = value;
+            return this;
+        }
     }
 }

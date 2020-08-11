@@ -1,4 +1,5 @@
-﻿using DecisionTree.Decisions;
+﻿using DecisionTree.Builders.Interface;
+using DecisionTree.Decisions;
 using DecisionTree.Tests.Dto;
 using DecisionTree.Tests.Model;
 using DecisionTree.Tree;
@@ -7,18 +8,23 @@ namespace DecisionTree.Tests.Tree
 {
     public class ProjectDecisionTree : DecisionTreeBase<ItProjectDecisionDto>
     {
-        private static readonly IDecisionResult<ItProjectDecisionDto> DoNothingResult =
+        private static readonly IActionPath<ItProjectDecisionDto> SendNotificationAction =
+            GetActionBuilder()
+                .AddTitle(nameof(SendNotificationAction))
+                .AddAction(dto => dto.SetSendNotification(true));
+
+        private static readonly IDecision<ItProjectDecisionDto> DoNothingResult =
             GetResultBuilder()
                 .AddTitle(nameof(DoNothingResult))
                 .Build();
 
-        private static readonly IDecisionResult<ItProjectDecisionDto> FinishResult =
+        private static readonly IDecision<ItProjectDecisionDto> FinishResult =
             GetResultBuilder()
                 .AddTitle(nameof(FinishResult))
                 .AddAction(dto => dto.SetResult("Project is finished."))
                 .Build();
 
-        private static readonly IDecisionResult<ItProjectDecisionDto> RequestBudgetResult =
+        private static readonly IDecision<ItProjectDecisionDto> RequestBudgetResult =
             GetResultBuilder()
                 .AddTitle(nameof(RequestBudgetResult))
                 .AddAction(dto => dto
@@ -26,13 +32,13 @@ namespace DecisionTree.Tests.Tree
                     .SetIsOnHold(true))
                 .Build();
 
-        private static readonly IDecisionResult<ItProjectDecisionDto> MoveDeadlineResult =
+        private static readonly IDecision<ItProjectDecisionDto> MoveDeadlineResult =
             GetResultBuilder()
                 .AddTitle(nameof(MoveDeadlineResult))
                 .AddAction(dto => dto.SetResult("Timeline reevaluation needed."))
                 .Build();
 
-        private static readonly IDecisionNode<ItProjectDecisionDto, bool> BudgetDecision =
+        private static readonly IDecision<ItProjectDecisionDto> BudgetDecision =
             GetNodeBuilder<bool>()
                 .AddTitle(nameof(BudgetDecision))
                 .AddCondition(dto => dto.Project.BudgetRemaining < dto.Project.ItemsToDo * 1000)
@@ -41,7 +47,7 @@ namespace DecisionTree.Tests.Tree
                 .AddAction(dto => dto.SetIsBudgetReviewed(true))
                 .Build();
 
-        private static readonly IDecisionNode<ItProjectDecisionDto, bool> DeadlineDecision =
+        private static readonly IDecision<ItProjectDecisionDto> DeadlineDecision =
             GetNodeBuilder<bool>()
                 .AddTitle(nameof(DeadlineDecision))
                 .AddCondition(dto => dto.Project.TimeToDeadline.Days < 7)
@@ -49,7 +55,7 @@ namespace DecisionTree.Tests.Tree
                 .AddPath(false, BudgetDecision)
                 .Build();
 
-        private static readonly IDecisionNode<ItProjectDecisionDto, bool> ToDoDecision =
+        private static readonly IDecision<ItProjectDecisionDto> ToDoDecision =
             GetNodeBuilder<bool>()
                 .AddTitle(nameof(ToDoDecision))
                 .AddCondition(dto => dto.Project.ItemsToDo > 10)
@@ -57,7 +63,7 @@ namespace DecisionTree.Tests.Tree
                 .AddPath(false, BudgetDecision)
                 .Build();
 
-        private static readonly IDecisionAction<ItProjectDecisionDto> ResetInternalAction =
+        private static readonly IDecision<ItProjectDecisionDto> ResetInternalAction =
             GetActionBuilder()
                 .AddTitle(nameof(ResetInternalAction))
                 .AddAction(dto => dto
@@ -66,15 +72,15 @@ namespace DecisionTree.Tests.Tree
                 .AddPath(DoNothingResult)
                 .Build();
 
-        private static readonly IDecisionNode<ItProjectDecisionDto, ProjectType> ProjectTypeDecision =
+        private static readonly IDecision<ItProjectDecisionDto> ProjectTypeDecision =
             GetNodeBuilder<ProjectType>()
                 .AddTitle(nameof(ProjectTypeDecision))
                 .AddCondition(dto => dto.Project.Type)
-                .AddPath(ProjectType.Internal, ResetInternalAction)
+                .AddPath(ProjectType.Internal, ResetInternalAction, SendNotificationAction)
                 .AddDefault(ToDoDecision)
                 .Build();
 
-        private static readonly IDecisionNode<ItProjectDecisionDto, bool> IsOnHoldDecision =
+        private static readonly IDecision<ItProjectDecisionDto> IsOnHoldDecision =
             GetNodeBuilder<bool>()
                 .AddTitle(nameof(IsOnHoldDecision))
                 .AddCondition(dto => dto.Project.IsOnHold)
@@ -82,12 +88,12 @@ namespace DecisionTree.Tests.Tree
                 .AddPath(false, ProjectTypeDecision)
                 .Build();
 
-        private static readonly IDecisionNode<ItProjectDecisionDto, bool> FinishedDecision =
+        private static readonly IDecision<ItProjectDecisionDto> FinishedDecision =
             GetNodeBuilder<bool>()
                 .AddTitle(nameof(FinishedDecision))
                 .AddCondition(dto => dto.Project.ItemsToDo == 0)
                 .AddPath(true, FinishResult)
-                .AddPath(false, IsOnHoldDecision)
+                .AddPath(false, IsOnHoldDecision, SendNotificationAction)
                 .Build();
 
         public override IDecision<ItProjectDecisionDto> GetTrunk() => FinishedDecision;

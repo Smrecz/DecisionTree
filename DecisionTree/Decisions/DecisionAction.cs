@@ -12,9 +12,14 @@ namespace DecisionTree.Decisions
             Title = title;
             Path = path;
         }
-        public string Title { get; }
+        public string Title { get; private set; }
         public IDecision<T> Path { get; }
         public Expression<Func<T, T>> Action { get; }
+
+        internal void ChangeTitle(string newTitle)
+        {
+            Title = newTitle;
+        }
 
         private readonly Func<T, T> _actionFunc;
 
