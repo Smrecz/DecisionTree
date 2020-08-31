@@ -1,36 +1,15 @@
-using DecisionTree.Decisions;
 using DecisionTree.Exceptions;
 using DecisionTree.Tests.Dto;
 using System;
 using System.Linq.Expressions;
 using DecisionTree.Builders;
+using DecisionTree.Tests.TestData;
 using Xunit;
 
 namespace DecisionTree.Tests
 {
     public class DecisionsTest
     {
-        private static readonly IDecisionResult<BoolDto> TrueResult =
-            DecisionResultBuilder<BoolDto>
-                .Create()
-                .AddTitle("True result")
-                .AddAction(boolDto => boolDto.SetResult(true))
-                .Build();
-
-        private static readonly IDecisionResult<BoolDto> FalseResult =
-            DecisionResultBuilder<BoolDto>
-                .Create()
-                .AddTitle("False result")
-                .AddAction(boolDto => boolDto.SetResult(false))
-                .Build();
-
-        private static readonly IDecisionResult<BoolDto> DefaultResult =
-            DecisionResultBuilder<BoolDto>
-                .Create()
-                .AddTitle("False result")
-                .AddAction(boolDto => boolDto.SetResult(false))
-                .Build();
-
         [Fact]
         public void ResultNode_Should_Evaluate_Action()
         {
@@ -64,7 +43,7 @@ namespace DecisionTree.Tests
                     .Create()
                     .AddTitle("Result")
                     .AddAction(boolDto => boolDto.SetResult(true))
-                    .AddPath(TrueResult)
+                    .AddPath(DecisionCatalog.TrueResult)
                     .Build();
 
             //Act
@@ -78,6 +57,31 @@ namespace DecisionTree.Tests
         public void DecisionNode_Should_Evaluate_Proper_Path()
         {
             //Arrange
+            var firstDto = new IntDto(2);
+            var secondDto = new IntDto(1);
+
+            var decisionNode =
+                DecisionNodeBuilder<IntDto, int>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddCondition(intDto => intDto.IntProperty)
+                    .AddPath(2, DecisionCatalog.TwoResult)
+                    .AddPath(1, DecisionCatalog.OneResult)
+                    .Build();
+
+            //Act
+            decisionNode.Evaluate(firstDto);
+            decisionNode.Evaluate(secondDto);
+
+            //Assert
+            Assert.Equal(2, firstDto.Result);
+            Assert.Equal(1, secondDto.Result);
+        }
+
+        [Fact]
+        public void DecisionNode_Should_Evaluate_Proper_BoolPath()
+        {
+            //Arrange
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
@@ -86,8 +90,8 @@ namespace DecisionTree.Tests
                     .Create()
                     .AddTitle("Title")
                     .AddCondition(boolDto => boolDto.BoolProperty)
-                    .AddPath(true, TrueResult)
-                    .AddPath(false, FalseResult)
+                    .AddPath(true, DecisionCatalog.TrueResult)
+                    .AddPath(false, DecisionCatalog.FalseResult)
                     .Build();
 
             //Act
@@ -100,7 +104,7 @@ namespace DecisionTree.Tests
         }
 
         [Fact]
-        public void DecisionNode_Should_Default_Path()
+        public void DecisionNode_Should_Evaluate_Default_Path()
         {
             //Arrange
             var trueDto = new BoolDto(true);
@@ -111,8 +115,8 @@ namespace DecisionTree.Tests
                     .Create()
                     .AddTitle("Title")
                     .AddCondition(boolDto => boolDto.BoolProperty)
-                    .AddPath(true, TrueResult)
-                    .AddDefault(DefaultResult)
+                    .AddPath(true, DecisionCatalog.TrueResult)
+                    .AddDefault(DecisionCatalog.DefaultResult)
                     .Build();
 
             //Act
@@ -136,7 +140,7 @@ namespace DecisionTree.Tests
                     .Create()
                     .AddTitle("Title")
                     .AddCondition(boolDto => boolDto.BoolProperty)
-                    .AddPath(true, TrueResult)
+                    .AddPath(true, DecisionCatalog.TrueResult)
                     .Build();
 
             //Act

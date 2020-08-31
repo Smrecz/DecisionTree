@@ -1,32 +1,13 @@
 using DecisionTree.Builders;
-using DecisionTree.Decisions;
 using DecisionTree.Exceptions;
 using DecisionTree.Tests.Dto;
+using DecisionTree.Tests.TestData;
 using Xunit;
 
 namespace DecisionTree.Tests
 {
     public class BuildersTest
     {
-        private static readonly IDecisionResult<BoolDto> TrueResult = 
-            DecisionResultBuilder<BoolDto>.Create()
-            .AddTitle("True result")
-            .AddAction(boolDto => boolDto.SetResult(true))
-            .Build();
-
-        private static readonly IDecisionResult<BoolDto> FalseResult =
-            DecisionResultBuilder<BoolDto>.Create()
-            .AddTitle("False result")
-            .AddAction(boolDto => boolDto.SetResult(false))
-            .Build();
-
-        private static readonly IDecisionResult<BoolDto> DefaultResult =
-            DecisionResultBuilder<BoolDto>.Create()
-            .AddTitle("False result")
-            .AddAction(boolDto => boolDto.SetResult(false))
-            .Build();
-
-
         [Fact]
         public void Built_ResultNode_Should_Evaluate_Action()
         {
@@ -34,7 +15,7 @@ namespace DecisionTree.Tests
             var trueDto = new BoolDto(true);
 
             //Act
-            TrueResult.Evaluate(trueDto);
+            DecisionCatalog.TrueResult.Evaluate(trueDto);
 
             //Assert
             Assert.True(trueDto.Result);
@@ -50,8 +31,8 @@ namespace DecisionTree.Tests
             var decisionNode = DecisionNodeBuilder<BoolDto, bool>.Create()
                 .AddTitle("Title")
                 .AddCondition(boolDto => boolDto.BoolProperty)
-                .AddPath(true, TrueResult)
-                .AddPath(false, FalseResult)
+                .AddPath(true, DecisionCatalog.TrueResult)
+                .AddPath(false, DecisionCatalog.FalseResult)
                 .Build();
 
             //Act
@@ -74,8 +55,8 @@ namespace DecisionTree.Tests
                 .Create()
                 .AddTitle("Title")
                 .AddCondition(boolDto => boolDto.BoolProperty)
-                .AddPath(true, TrueResult)
-                .AddDefault(DefaultResult)
+                .AddPath(true, DecisionCatalog.TrueResult)
+                .AddDefault(DecisionCatalog.DefaultResult)
                 .Build();
 
             //Act
@@ -85,6 +66,57 @@ namespace DecisionTree.Tests
             //Assert
             Assert.True(trueDto.Result);
             Assert.False(falseDto.Result);
+        }
+
+        [Fact]
+        public void Built_DecisionNode_Should_Create_Action_From_ActionPath()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+            var falseDto = new BoolDto(false);
+
+            var decisionNode = DecisionNodeBuilder<BoolDto, bool>.Create()
+                .AddTitle("Title")
+                .AddCondition(boolDto => boolDto.BoolProperty)
+                .AddPath(true, DecisionCatalog.TrueResult, DecisionCatalog.SomeAction)
+                .AddPath(false, DecisionCatalog.FalseResult)
+                .Build();
+
+            //Act
+            decisionNode.Evaluate(trueDto);
+            decisionNode.Evaluate(falseDto);
+
+            //Assert
+            Assert.True(trueDto.Result);
+            Assert.False(falseDto.Result);
+            Assert.True(trueDto.ActionFlag);
+            Assert.False(falseDto.ActionFlag);
+        }
+
+        [Fact]
+        public void Built_DecisionNode_Should_Call_Action()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+            var falseDto = new BoolDto(false);
+
+            var decisionNode = DecisionNodeBuilder<BoolDto, bool>.Create()
+                .AddTitle("Title")
+                .AddCondition(boolDto => boolDto.BoolProperty)
+                .AddPath(true, DecisionCatalog.TrueResult)
+                .AddPath(false, DecisionCatalog.FalseResult)
+                .AddAction(boolDto => boolDto.DoSomeAction())
+                .Build();
+
+            //Act
+            decisionNode.Evaluate(trueDto);
+            decisionNode.Evaluate(falseDto);
+
+            //Assert
+            Assert.True(trueDto.Result);
+            Assert.False(falseDto.Result);
+            Assert.True(trueDto.ActionFlag);
+            Assert.True(falseDto.ActionFlag);
         }
 
         [Fact]
@@ -98,7 +130,7 @@ namespace DecisionTree.Tests
                 .Create()
                 .AddTitle("Title")
                 .AddCondition(boolDto => boolDto.BoolProperty)
-                .AddPath(true, TrueResult)
+                .AddPath(true, DecisionCatalog.TrueResult)
                 .Build();
 
             //Act
