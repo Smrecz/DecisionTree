@@ -1,6 +1,6 @@
 # DecisionTree
 
-DecisionTree is a lightweight open source framework that helps you define decision trees via config and generates DOT graph definition.<br>
+DecisionTree is a lightweight open source framework that helps you define decision trees via configuration and generates DOT graph definition.<br>
 
 Available on:<br>
 <a href="https://www.nuget.org/packages/DecisionTree"><img alt="Nuget" src="https://buildstats.info/nuget/DecisionTree"></a> [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/Smrecz/DecisionTree/blob/master/LICENSE)<br>
@@ -10,10 +10,9 @@ Available on:<br>
 DecisionTree is aimed to provide a skeleton to build your decision tree around and to facilitate logic understanding, requirements cross-check and knowledge sharing by generating visualization definition in DOT language.<br>
 
 # Graph definition in DOT
-DOT language is used to define graphs and is understood by many tools.<br>
-(all of which have dependency on Graphviz: https://graphviz.org/)<br>
+DOT language is used to define graphs and is understood by many tools - all of which have dependency on Graphviz: https://graphviz.org/<br>
 
-DecisionTree's ConvertToDotGraph() method output can be used to generate a graph visualisation.<br>
+DecisionTree's `ConvertToDotGraph<T>()` method output can be used to generate a graph visualisation.<br>
 You can use on-line tools like for example: https://dreampuf.github.io/GraphvizOnline/<br>
 
 # Examples
@@ -30,5 +29,3 @@ If you would like to support my work by making a Donation (€10), you are welco
 
 # TODO
 <b>ALL SUGGESTIONS ARE WELCOME!</b>
-<br>
-* More documentation...
