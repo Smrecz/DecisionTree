@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
-using DecisionTree.Decisions;
+using DecisionTree.Decisions.DecisionsBase;
 
-namespace DecisionTree.Builders.Interface
+namespace DecisionTree.Builders.Interface.Result
 {
     public interface IResultBuild<T>
     {

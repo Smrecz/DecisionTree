@@ -1,4 +1,4 @@
-﻿namespace DecisionTree.Builders.Interface
+﻿namespace DecisionTree.Builders.Interface.Node
 {
     public interface INodeTitle<T, TResult>
     {

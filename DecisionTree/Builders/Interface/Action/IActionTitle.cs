@@ -1,4 +1,4 @@
-﻿namespace DecisionTree.Builders.Interface
+﻿namespace DecisionTree.Builders.Interface.Action
 {
     public interface IActionTitle<T>
     {

@@ -1,7 +1,8 @@
 ﻿using DecisionTree.Decisions;
 using System;
 using System.Linq.Expressions;
-using DecisionTree.Builders.Interface;
+using DecisionTree.Builders.Interface.Result;
+using DecisionTree.Decisions.DecisionsBase;
 
 namespace DecisionTree.Builders
 {
@@ -27,7 +28,12 @@ namespace DecisionTree.Builders
             return this;
         }
 
-        public IDecisionResult<T> Build() => 
-            new DecisionResult<T>(_title, _action);
+        public IDecisionResult<T> Build()
+        {
+            if(_action == null)
+                return new DecisionResult<T>(_title);
+
+            return new DecisionActionResult<T>(_title, _action);
+        }
     }
 }

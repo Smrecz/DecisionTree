@@ -1,6 +1,6 @@
-﻿using DecisionTree.Decisions;
+﻿using DecisionTree.Decisions.DecisionsBase;
 
-namespace DecisionTree.Builders.Interface
+namespace DecisionTree.Builders.Interface.Node
 {
     public interface INodeBuild<T, TResult> 
         : INodeLogic<T, TResult>, INodeAction<T, TResult>

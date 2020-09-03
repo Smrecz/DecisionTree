@@ -1,7 +1,8 @@
 ﻿using DecisionTree.Decisions;
 using System;
 using System.Linq.Expressions;
-using DecisionTree.Builders.Interface;
+using DecisionTree.Builders.Interface.Action;
+using DecisionTree.Decisions.DecisionsBase;
 
 namespace DecisionTree.Builders
 {

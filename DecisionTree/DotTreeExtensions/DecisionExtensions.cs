@@ -1,30 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
-using DecisionTree.Decisions;
+using DecisionTree.Decisions.DecisionsBase;
 using DecisionTree.Exceptions;
 
 namespace DecisionTree.DotTreeExtensions
 {
     public static class DecisionExtensions
     {
-        private static readonly MethodInfo PrintNodeMethod =
-                    typeof(DecisionExtensions)
-                    .GetMethod(nameof(PrintNode));
-
-        private static readonly MethodInfo PrintResultMethod =
-                    typeof(DecisionExtensions)
-                    .GetMethod(nameof(PrintResult));
-
-        private static readonly MethodInfo PrintActionMethod =
-            typeof(DecisionExtensions)
-                .GetMethod(nameof(PrintAction));
-
-        private static readonly string DecisionNodeInterface = typeof(IDecisionNode<,>).Name;
-        private static readonly string DecisionResultInterface = typeof(IDecisionResult<>).Name;
-        private static readonly string DecisionActionInterface = typeof(IDecisionAction<>).Name;
+        private static readonly Dictionary<Type, MethodInfo> ExtensionBindingDictionary = new Dictionary<Type, MethodInfo>
+        {
+            {typeof(IDecisionNode<,>), typeof(DecisionExtensions).GetMethod(nameof(PrintNode))},
+            {typeof(IDecisionResult<>), typeof(DecisionExtensions).GetMethod(nameof(PrintResult))},
+            {typeof(IDecisionAction<>), typeof(DecisionExtensions).GetMethod(nameof(PrintAction))}
+        };
 
         private const string DefaultOptionText = "#default_option";
         private const string ActionCellStyle = "align=\"left\"";
@@ -41,34 +33,23 @@ namespace DecisionTree.DotTreeExtensions
 
         private static string InvokeChildPrint<T>(this IDecision<T> decision, NodeId nodeId, string key = null)
         {
-            var genericTypes = decision.GetType().GenericTypeArguments;
-            var implementedInterfaces = decision
-                .GetType()
-                .GetInterfaces()
-                .Select(type => type.Name)
-                .ToArray();
+            var implementedInterface = GetImplementedPrintableInterface(decision);
 
             nodeId?.Increment();
 
             var printParams = new object[] { decision, nodeId, key };
 
-            if (implementedInterfaces.Contains(DecisionResultInterface))
-                return (string)PrintResultMethod
-                    .MakeGenericMethod(genericTypes)
-                    .Invoke(decision, printParams);
-
-            if (implementedInterfaces.Contains(DecisionNodeInterface))
-                return (string)PrintNodeMethod
-                    .MakeGenericMethod(genericTypes)
-                    .Invoke(decision, printParams);
-
-            if (implementedInterfaces.Contains(DecisionActionInterface))
-                return (string)PrintActionMethod
-                    .MakeGenericMethod(genericTypes)
-                    .Invoke(decision, printParams);
-
-            throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
+            return (string)ExtensionBindingDictionary[implementedInterface.GetGenericTypeDefinition()]
+                .MakeGenericMethod(implementedInterface.GenericTypeArguments)
+                .Invoke(decision, printParams);
         }
+
+        private static Type GetImplementedPrintableInterface<T>(IDecision<T> decision) =>
+            decision
+                .GetType()
+                .GetInterfaces()
+                .FirstOrDefault(type => ExtensionBindingDictionary.Keys.Contains(type.GetGenericTypeDefinition())) 
+            ?? throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
 
         public static string PrintNode<T, TResult>(this IDecisionNode<T, TResult> node, NodeId nodeId, string label = null)
         {
@@ -99,7 +80,7 @@ namespace DecisionTree.DotTreeExtensions
 
             var actionDescription = node.Action != null
                 ? GetHtmlTable(node.Action.ToString(), null, titleWithCounter, TitleStyle.ResultAction)
-                : GetHtmlTable(string.Empty,null, titleWithCounter, TitleStyle.Result);
+                : GetHtmlTable(string.Empty, null, titleWithCounter, TitleStyle.Result);
 
             return $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
         }
@@ -153,8 +134,8 @@ namespace DecisionTree.DotTreeExtensions
 
         private static string AddCounter(int? counter, string title)
         {
-            return counter != null 
-                ? $"[{counter}] {title}" 
+            return counter != null
+                ? $"[{counter}] {title}"
                 : title;
         }
 
@@ -169,7 +150,7 @@ namespace DecisionTree.DotTreeExtensions
                                 $"<font {FontStyle}>{HttpUtility.HtmlEncode(title)}</font>" +
                             "</td>" +
                         "</tr>" +
-                        condition+
+                        condition +
                         actionPartRow +
                    "</table>>";
         }

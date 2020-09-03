@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace DecisionTree.Builders.Interface
+namespace DecisionTree.Builders.Interface.Action
 {
     public interface IAction<T>
     {

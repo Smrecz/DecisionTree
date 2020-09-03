@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using DecisionTree.Builders.Interface;
+using DecisionTree.Builders.Interface.Action;
+using DecisionTree.Builders.Interface.Node;
+using DecisionTree.Decisions.DecisionsBase;
 
 namespace DecisionTree.Builders
 {
@@ -25,7 +27,7 @@ namespace DecisionTree.Builders
             return this;
         }
 
-        public INodeLogic<T, TResult> AddCondition(Expression<Func<T, TResult>> nodeCondition)
+        public INodePath<T, TResult> AddCondition(Expression<Func<T, TResult>> nodeCondition)
         {
             _condition = nodeCondition;
             return this;
@@ -61,7 +63,12 @@ namespace DecisionTree.Builders
             return this;
         }
 
-        public IDecisionNode<T, TResult> Build() =>
-            new DecisionNode<T, TResult>(_title, _condition, _paths, _defaultDecision, _action);
+        public IDecisionNode<T, TResult> Build()
+        {
+            if (_action == null)
+                return new DecisionNode<T, TResult>(_title, _condition, _paths, _defaultDecision);
+
+            return new DecisionActionNode<T, TResult>(_title, _condition, _paths, _action, _defaultDecision);
+        }
     }
 }

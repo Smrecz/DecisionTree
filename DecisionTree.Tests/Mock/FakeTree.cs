@@ -1,4 +1,4 @@
-﻿using DecisionTree.Decisions;
+﻿using DecisionTree.Decisions.DecisionsBase;
 using DecisionTree.Tree;
 
 namespace DecisionTree.Tests.Mock

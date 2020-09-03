@@ -1,5 +1,5 @@
 ﻿using System;
-using DecisionTree.Decisions;
+using DecisionTree.Decisions.DecisionsBase;
 
 namespace DecisionTree.Tests.Mock
 {

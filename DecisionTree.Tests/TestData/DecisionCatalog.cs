@@ -1,6 +1,6 @@
 ﻿using DecisionTree.Builders;
-using DecisionTree.Builders.Interface;
-using DecisionTree.Decisions;
+using DecisionTree.Builders.Interface.Action;
+using DecisionTree.Decisions.DecisionsBase;
 using DecisionTree.Tests.Dto;
 
 namespace DecisionTree.Tests.TestData

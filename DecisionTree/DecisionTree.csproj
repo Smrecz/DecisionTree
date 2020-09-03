@@ -7,15 +7,17 @@
     <Authors>Piotr Smreczynski</Authors>
     <PackageTags>DecisionTree; Graphviz</PackageTags>
     <PackageId>DecisionTree</PackageId>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/Smrecz/DecisionTree</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Smrecz/DecisionTree</PackageProjectUrl>
     <Copyright>Piotr Smreczynski</Copyright>
     <Description>Decision Tree + Visualisation
 Lightweight framework to define decision trees via configuration with option to generate graph definition in DOT language.</Description>
-    <PackageReleaseNotes>Optional action can be added to a decision node path</PackageReleaseNotes>
-    <Version>1.0.6</Version>
+    <PackageReleaseNotes>Extendability improvements
+Performance improvements
+BinaryDecisionNode introduced</PackageReleaseNotes>
+    <Version>1.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
