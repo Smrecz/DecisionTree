@@ -14,10 +14,8 @@
     <Copyright>Piotr Smreczynski</Copyright>
     <Description>Decision Tree + Visualisation
 Lightweight framework to define decision trees via configuration with option to generate graph definition in DOT language.</Description>
-    <PackageReleaseNotes>Extendability improvements
-Performance improvements
-BinaryDecisionNode introduced</PackageReleaseNotes>
-    <Version>1.0.7</Version>
+    <PackageReleaseNotes>Meaningful exception message added to Evaluate.</PackageReleaseNotes>
+    <Version>1.0.8</Version>
   </PropertyGroup>
 
   <ItemGroup>

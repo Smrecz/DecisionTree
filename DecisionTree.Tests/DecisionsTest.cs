@@ -148,7 +148,8 @@ namespace DecisionTree.Tests
             void FalseAction() => decisionNode.Evaluate(falseDto);
 
             //Assert
-            Assert.Throws<MissingDecisionPathException>(FalseAction);
+            var exception = Assert.Throws<DecisionEvaluationException>(FalseAction);
+            Assert.IsType<MissingDecisionPathException>(exception.InnerException);
         }
     }
 }

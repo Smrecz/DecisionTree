@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using DecisionTree.Decisions.DecisionsBase;
+using DecisionTree.Exceptions;
 
 namespace DecisionTree.Decisions
 {
@@ -20,9 +21,20 @@ namespace DecisionTree.Decisions
 
         public override void Evaluate(T dto)
         {
-            _actionFunc.Invoke(dto);
+            try
+            {
+                _actionFunc.Invoke(dto);
 
-            base.Evaluate(dto);
+                base.Evaluate(dto);
+            }
+            catch (DecisionEvaluationException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new DecisionEvaluationException(DecisionExceptionMessage, e);
+            }
         }
     }
 }
