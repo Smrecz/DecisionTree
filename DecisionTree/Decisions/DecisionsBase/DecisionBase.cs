@@ -17,21 +17,21 @@ namespace DecisionTree.Decisions.DecisionsBase
             Title = newTitle;
         }
 
-        internal void HandleEvaluationException(Exception exception)
+        internal Exception GetEvaluationException(Exception exception)
         {
             if (exception is DecisionEvaluationException)
             {
                 var newMessage = $"{exception.Message}" +
                                  $"{Environment.NewLine}^-- '{Title}'";
 
-                throw new DecisionEvaluationException(newMessage, exception.InnerException);
+                return new DecisionEvaluationException(newMessage, exception.InnerException);
             }
 
             var message = "Decision evaluation failed (check inner exception for details)." +
                           $"{Environment.NewLine}Full decision tree path:" +
                           $"{Environment.NewLine}X-- '{Title}' (FAILED)";
 
-            throw new DecisionEvaluationException(message, exception);
+            return new DecisionEvaluationException(message, exception);
         }
     }
 }

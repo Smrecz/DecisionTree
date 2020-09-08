@@ -7,6 +7,7 @@ using DecisionTree.DotTreeExtensions;
 using DecisionTree.Exceptions;
 using DecisionTree.Tests.Dto;
 using DecisionTree.Tests.Mock;
+using DecisionTree.Tests.Model;
 using DecisionTree.Tests.TestData;
 using DecisionTree.Tests.Tree;
 using Xunit;
@@ -71,6 +72,35 @@ namespace DecisionTree.Tests
             //Assert
             NamerFactory.AdditionalInformation = title;
             Approvals.VerifyJson(JsonSerializer.Serialize(dto));
+        }
+
+        [Fact]
+        public void DecisionTree_Should_Provide_Full_Path_On_Exception()
+        {
+            //Arrange
+            var dto = new ItProjectDecisionDtoWithError()
+            {
+                Project = new ItProject
+                {
+                    ItemsToDo = 15,
+                    Type = ProjectType.Financial,
+                    TimeToDeadline = TimeSpan.FromDays(10),
+                    BudgetRemaining = 1000
+                }
+            };
+
+
+
+            var tree = new ProjectDecisionTree();
+
+            //Act
+            void Result() => tree.GetTrunk().Evaluate(dto);
+
+            //Assert
+            var exception = Assert.Throws<DecisionEvaluationException>(Result);
+            Assert.IsType<ArgumentException>(exception.InnerException);
+
+            Assert.Equal(DecisionTreeTestData.ExpectedExceptionMessageWithPath, exception.Message);
         }
     }
 }

@@ -79,19 +79,19 @@ namespace DecisionTree.Tests
         }
 
         [Fact]
-        public void DecisionNode_Should_Evaluate_Proper_BoolPath()
+        public void BinaryDecisionNode_Should_Evaluate_Proper_Path()
         {
             //Arrange
             var trueDto = new BoolDto(true);
             var falseDto = new BoolDto(false);
 
             var decisionNode =
-                DecisionNodeBuilder<BoolDto, bool>
+                BinaryDecisionNodeBuilder<BoolDto>
                     .Create()
                     .AddTitle("Title")
                     .AddCondition(boolDto => boolDto.BoolProperty)
-                    .AddPath(true, DecisionCatalog.TrueResult)
-                    .AddPath(false, DecisionCatalog.FalseResult)
+                    .AddPositivePath(DecisionCatalog.TrueResult)
+                    .AddNegativePath(DecisionCatalog.FalseResult)
                     .Build();
 
             //Act
@@ -151,5 +151,95 @@ namespace DecisionTree.Tests
             var exception = Assert.Throws<DecisionEvaluationException>(FalseAction);
             Assert.IsType<MissingDecisionPathException>(exception.InnerException);
         }
+
+        [Fact]
+        public void DecisionNode_Should_Throw_DecisionEvaluationException_On_Error()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+
+            var decisionNode =
+                DecisionNodeBuilder<BoolDto, bool>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddCondition(boolDto => ThrowBoolException())
+                    .AddPath(true, DecisionCatalog.TrueResult)
+                    .Build();
+
+            //Act
+            void Action() => decisionNode.Evaluate(trueDto);
+
+            //Assert
+            Assert.Throws<DecisionEvaluationException>(Action);
+        }
+
+        [Fact]
+        public void DecisionActionNode_Should_Throw_DecisionEvaluationException_On_Error()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+
+            var decisionNode =
+                DecisionNodeBuilder<BoolDto, bool>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddCondition(boolDto => ThrowBoolException())
+                    .AddPath(true, DecisionCatalog.TrueResult)
+                    .AddAction(dto => dto.DoSomeAction())
+                    .Build();
+
+            //Act
+            void Action() => decisionNode.Evaluate(trueDto);
+
+            //Assert
+            Assert.Throws<DecisionEvaluationException>(Action);
+        }
+
+        [Fact]
+        public void DecisionResult_Should_Throw_DecisionEvaluationException_On_Error()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+
+            var decisionResult =
+                DecisionResultBuilder<BoolDto>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddAction(dto => ThrowBoolDtoException())
+                    .Build();
+
+            //Act
+            void Action() => decisionResult.Evaluate(trueDto);
+
+            //Assert
+            Assert.Throws<DecisionEvaluationException>(Action);
+        }
+
+        [Fact]
+        public void DecisionAction_Should_Throw_DecisionEvaluationException_On_Error()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+
+            var decisionAction =
+                DecisionActionBuilder<BoolDto>
+                    .Create()
+                    .AddTitle("Title")
+                    .AddAction(dto => ThrowBoolDtoException())
+                    .AddPath(DecisionCatalog.TrueResult)
+                    .Build();
+
+            //Act
+            void Action() => decisionAction.Evaluate(trueDto);
+
+            //Assert
+            Assert.Throws<DecisionEvaluationException>(Action);
+        }
+
+        private static bool ThrowBoolException() => 
+            throw new Exception("Test exception");
+
+        private static BoolDto ThrowBoolDtoException() =>
+            throw new Exception("Test exception");
     }
 }

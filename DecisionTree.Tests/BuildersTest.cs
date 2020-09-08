@@ -141,5 +141,79 @@ namespace DecisionTree.Tests
             var exception = Assert.Throws<DecisionEvaluationException>(FalseAction);
             Assert.IsType<MissingDecisionPathException>(exception.InnerException);
         }
+
+        [Fact]
+        public void Built_BinaryDecisionNode_Should_Evaluate_Proper_Path()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+            var falseDto = new BoolDto(false);
+
+            var decisionNode = BinaryDecisionNodeBuilder<BoolDto>.Create()
+                .AddTitle("Title")
+                .AddCondition(boolDto => boolDto.BoolProperty)
+                .AddPositivePath(DecisionCatalog.TrueResult)
+                .AddNegativePath(DecisionCatalog.FalseResult)
+                .Build();
+
+            //Act
+            decisionNode.Evaluate(trueDto);
+            decisionNode.Evaluate(falseDto);
+
+            //Assert
+            Assert.True(trueDto.Result);
+            Assert.False(falseDto.Result);
+        }
+        
+        [Fact]
+        public void Built_BinaryDecisionNode_Should_Create_Action_From_ActionPath()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+            var falseDto = new BoolDto(false);
+
+            var decisionNode = BinaryDecisionNodeBuilder<BoolDto>.Create()
+                .AddTitle("Title")
+                .AddCondition(boolDto => boolDto.BoolProperty)
+                .AddPositivePath(DecisionCatalog.TrueResult, DecisionCatalog.SomeAction)
+                .AddNegativePath(DecisionCatalog.FalseResult)
+                .Build();
+
+            //Act
+            decisionNode.Evaluate(trueDto);
+            decisionNode.Evaluate(falseDto);
+
+            //Assert
+            Assert.True(trueDto.Result);
+            Assert.False(falseDto.Result);
+            Assert.True(trueDto.ActionFlag);
+            Assert.False(falseDto.ActionFlag);
+        }
+
+        [Fact]
+        public void Built_BinaryDecisionNode_Should_Call_Action()
+        {
+            //Arrange
+            var trueDto = new BoolDto(true);
+            var falseDto = new BoolDto(false);
+
+            var decisionNode = BinaryDecisionNodeBuilder<BoolDto>.Create()
+                .AddTitle("Title")
+                .AddCondition(boolDto => boolDto.BoolProperty)
+                .AddPositivePath(DecisionCatalog.TrueResult)
+                .AddNegativePath(DecisionCatalog.FalseResult)
+                .AddAction(boolDto => boolDto.DoSomeAction())
+                .Build();
+
+            //Act
+            decisionNode.Evaluate(trueDto);
+            decisionNode.Evaluate(falseDto);
+
+            //Assert
+            Assert.True(trueDto.Result);
+            Assert.False(falseDto.Result);
+            Assert.True(trueDto.ActionFlag);
+            Assert.True(falseDto.ActionFlag);
+        }
     }
 }

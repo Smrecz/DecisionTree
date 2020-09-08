@@ -186,7 +186,7 @@ namespace DecisionTree.DotTreeExtensions
                 TitleStyle.Result => "#343a40",
                 TitleStyle.ResultAction => "#28a745",
                 TitleStyle.Action => "#6c757d",
-                _ => throw new ArgumentOutOfRangeException(nameof(titleStyle), titleStyle, null)
+                _ => "#343a40"
             };
     }
 }

@@ -7,37 +7,37 @@ namespace DecisionTree.Tests.Dto
         public ItProject Project { get; set; }
         public string Result { get; set; }
 
-        public ItProjectDecisionDto SetResult(string value)
+        public virtual ItProjectDecisionDto SetResult(string value)
         {
             Result = value;
             return this;
         }
 
-        public ItProjectDecisionDto SetIsBudgetReviewed(bool value)
+        public virtual ItProjectDecisionDto SetIsBudgetReviewed(bool value)
         {
             Project.IsBudgetReviewed = value;
             return this;
         }
 
-        public ItProjectDecisionDto SetIsOnHold(bool value)
+        public virtual ItProjectDecisionDto SetIsOnHold(bool value)
         {
             Project.IsOnHold = value;
             return this;
         }
 
-        public ItProjectDecisionDto SetBudgetRemaining(int value)
+        public virtual ItProjectDecisionDto SetBudgetRemaining(int value)
         {
             Project.BudgetRemaining = value;
             return this;
         }
 
-        public ItProjectDecisionDto SetItemsToDo(int value)
+        public virtual ItProjectDecisionDto SetItemsToDo(int value)
         {
             Project.ItemsToDo = value;
             return this;
         }
 
-        public ItProjectDecisionDto SetSendNotification(bool value)
+        public virtual ItProjectDecisionDto SetSendNotification(bool value)
         {
             Project.SendNotification = value;
             return this;

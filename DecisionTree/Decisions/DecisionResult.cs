@@ -8,17 +8,5 @@ namespace DecisionTree.Decisions
         internal DecisionResult(string title) : base(title)
         {
         }
-
-        public override void Evaluate(T dto)
-        {
-            try
-            {
-                base.Evaluate(dto);
-            }
-            catch (Exception e)
-            {
-                HandleEvaluationException(e);
-            }
-        }
     }
 }

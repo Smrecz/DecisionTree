@@ -22,7 +22,7 @@ namespace DecisionTree.Decisions
             }
             catch (Exception e)
             {
-                HandleEvaluationException(e);
+                throw GetEvaluationException(e);
             }
         }
     }
