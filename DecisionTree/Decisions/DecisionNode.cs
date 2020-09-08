@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using DecisionTree.Decisions.DecisionsBase;
-using DecisionTree.Exceptions;
 
 namespace DecisionTree.Decisions
 {
@@ -22,13 +21,9 @@ namespace DecisionTree.Decisions
             {
                 base.Evaluate(dto);
             }
-            catch (DecisionEvaluationException)
-            {
-                throw;
-            }
             catch (Exception e)
             {
-                throw new DecisionEvaluationException(DecisionExceptionMessage, e);
+                HandleEvaluationException(e);
             }
         }
     }

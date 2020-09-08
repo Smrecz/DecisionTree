@@ -1,4 +1,7 @@
-﻿namespace DecisionTree.Decisions.DecisionsBase
+﻿using System;
+using DecisionTree.Exceptions;
+
+namespace DecisionTree.Decisions.DecisionsBase
 {
     public abstract class DecisionBase
     {
@@ -14,7 +17,21 @@
             Title = newTitle;
         }
 
-        protected string DecisionExceptionMessage => 
-            $"Title: '{Title}' - Type: {GetType().Name} - Decision evaluation failed, check inner exception for details.";
+        internal void HandleEvaluationException(Exception exception)
+        {
+            if (exception is DecisionEvaluationException)
+            {
+                var newMessage = $"{exception.Message}" +
+                                 $"{Environment.NewLine}^-- '{Title}'";
+
+                throw new DecisionEvaluationException(newMessage, exception.InnerException);
+            }
+
+            var message = "Decision evaluation failed (check inner exception for details)." +
+                          $"{Environment.NewLine}Full decision tree path:" +
+                          $"{Environment.NewLine}X-- '{Title}' (FAILED)";
+
+            throw new DecisionEvaluationException(message, exception);
+        }
     }
 }

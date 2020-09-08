@@ -43,20 +43,22 @@ namespace DecisionTree.Tests
             _testOutputHelper = testOutputHelper;
         }
 
-        [Fact(Skip = "Used to measure rough performance estimate against pure IF statements - skipped for day to day test usage.")]
+        [Fact]
         public void Check_DecisionTree_Performance_Against_Pure_Conditions()
         {
-            //Act
+            //Arrange
             _treeTrunk.Evaluate(_dtoInstance1);
             PureConditionalCheck(_dtoInstance2);
 
+            //Act
             var time1 = RunInTimedLoop(100_000, _dtoInstance1, dto => _treeTrunk.Evaluate(dto));
 
             var time2 = RunInTimedLoop(100_000, _dtoInstance2, PureConditionalCheck);
 
+            //Assert
             _testOutputHelper.WriteLine($"Time1: {time1:F} {Environment.NewLine}Time2: {time2:F}");
-
             Assert.Equal(JsonSerializer.Serialize(_dtoInstance1), JsonSerializer.Serialize(_dtoInstance2));
+            Assert.True(time1 < 4 * time2) ;
         }
 
         private static void PureConditionalCheck(ItProjectDecisionDto dto)
