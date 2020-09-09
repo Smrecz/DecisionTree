@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using DecisionTree.Decisions.DecisionsBase;
 using DecisionTree.Tests.Dto;
 using DecisionTree.Tests.Model;
@@ -43,51 +46,88 @@ namespace DecisionTree.Tests
             _testOutputHelper = testOutputHelper;
         }
 
-        [Fact]
+        [Fact(Skip="Use to get rough idea about DecisionTree performance against 'if' spam.")]
         public void Check_DecisionTree_Performance_Against_Pure_Conditions()
         {
             //Arrange
-            _treeTrunk.Evaluate(_dtoInstance1);
-            PureConditionalCheck(_dtoInstance2);
+            Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(2);
+
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+
+            RunInTimedLoop(1000, 10, DecisionTreeCheck);
+            RunInTimedLoop(1000, 10, PureConditionalCheck);
 
             //Act
-            var time1 = RunInTimedLoop(100_000, _dtoInstance1, dto => _treeTrunk.Evaluate(dto));
-
-            var time2 = RunInTimedLoop(100_000, _dtoInstance2, PureConditionalCheck);
+            var time1 = RunInTimedLoop(100_000, 10, DecisionTreeCheck);
+            var time2 = RunInTimedLoop(1_000_000, 10, PureConditionalCheck) / 10;
 
             //Assert
             _testOutputHelper.WriteLine($"Time1: {time1:F} {Environment.NewLine}Time2: {time2:F}");
             Assert.Equal(JsonSerializer.Serialize(_dtoInstance1), JsonSerializer.Serialize(_dtoInstance2));
-            Assert.True(time1 < 4 * time2) ;
+            Assert.True(time1 < 3 * time2);
         }
 
-        private static void PureConditionalCheck(ItProjectDecisionDto dto)
+        private void DecisionTreeCheck()
         {
-            if (dto.Project.ItemsToDo != 0)
-            {
-                dto.SetSendNotification(true);
+            _treeTrunk.Evaluate(_dtoInstance1);
+        }
 
-                if (dto.Project.IsOnHold == false)
-                    if(dto.Project.Type == ProjectType.Financial)
-                        if(dto.Project.ItemsToDo > 10)
-                            if(dto.Project.TimeToDeadline.Days >= 7)
-                                if (dto.Project.BudgetRemaining >= dto.Project.ItemsToDo * 1000)
-                                    dto.SetIsBudgetReviewed(true);
+        private void PureConditionalCheck()
+        {
+            if (_dtoInstance2.Project.ItemsToDo != 0)
+            {
+                _dtoInstance2.SetSendNotification(true);
+
+                if (_dtoInstance2.Project.IsOnHold == false)
+                    if (_dtoInstance2.Project.Type == ProjectType.Financial)
+                        if (_dtoInstance2.Project.ItemsToDo > 10)
+                            if (_dtoInstance2.Project.TimeToDeadline.Days >= 7)
+                                if (_dtoInstance2.Project.BudgetRemaining >= _dtoInstance2.Project.ItemsToDo * 1000)
+                                    _dtoInstance2.SetIsBudgetReviewed(true);
             }
         }
 
-        private static long RunInTimedLoop(int count, ItProjectDecisionDto dto, Action<ItProjectDecisionDto> action)
+        private static double RunInTimedLoop(int count, int times, Action action)
         {
-            var timer = new Stopwatch();
+            var timeRecordings = new List<double>(times);
 
-            timer.Start();
+            for (var i = 0; i < times; i++)
+            {
+                var start = GetCurrentCpuMilliseconds();
 
-            for (var i = 0; i < count; i++)
-                action.Invoke(dto);
+                for (var j = 0; j < count; j++)
+                    action.Invoke();
 
-            timer.Stop();
+                var stop = GetCurrentCpuMilliseconds();
 
-            return timer.ElapsedMilliseconds;
+                timeRecordings.Add(stop - start);
+            }
+
+            return NormalizedMean(timeRecordings);
+        }
+
+        private static double GetCurrentCpuMilliseconds() =>
+            Process
+                .GetCurrentProcess()
+                .TotalProcessorTime
+                .TotalMilliseconds;
+
+        private static double NormalizedMean(ICollection<double> values)
+        {
+            var deviations = GetDeviations(values).ToArray();
+            var meanDeviation = deviations.Sum(deviation => Math.Abs(deviation.Item2)) / values.Count;
+            return deviations
+                .Where(deviation => deviation.Item2 > 0 || Math.Abs(deviation.Item2) <= meanDeviation)
+                .Average(t => t.Item1);
+        }
+
+        private static IEnumerable<Tuple<double, double>> GetDeviations(ICollection<double> values)
+        {
+            var average = values.Average();
+            foreach (var value in values)
+                yield return Tuple.Create(value, average - value);
         }
     }
 }
