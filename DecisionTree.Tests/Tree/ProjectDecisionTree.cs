@@ -73,7 +73,7 @@ namespace DecisionTree.Tests.Tree
                 .Build();
 
         private static readonly IDecision<ItProjectDecisionDto> ProjectTypeDecision =
-            GetNodeBuilder<ProjectType>()
+            GetNodeBuilder<ProjectType?>()
                 .AddTitle(nameof(ProjectTypeDecision))
                 .AddCondition(dto => dto.Project.Type)
                 .AddPath(ProjectType.Internal, ResetInternalAction, SendNotificationAction)

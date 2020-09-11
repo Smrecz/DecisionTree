@@ -48,6 +48,7 @@ namespace DecisionTree.DotTreeExtensions
             decision
                 .GetType()
                 .GetInterfaces()
+                .Where(type => type.IsGenericType)
                 .FirstOrDefault(type => ExtensionBindingDictionary.Keys.Contains(type.GetGenericTypeDefinition())) 
             ?? throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
 
@@ -74,30 +75,30 @@ namespace DecisionTree.DotTreeExtensions
             return printResult;
         }
 
-        public static string PrintResult<T>(this IDecisionResult<T> node, NodeId nodeId, string label)
+        public static string PrintResult<T>(this IDecisionResult<T> result, NodeId nodeId, string label)
         {
-            var titleWithCounter = AddCounter(nodeId?.Counter, node.Title);
+            var titleWithCounter = AddCounter(nodeId?.Counter, result.Title);
 
-            var actionDescription = node.Action != null
-                ? GetHtmlTable(node.Action.ToString(), null, titleWithCounter, TitleStyle.ResultAction)
+            var actionDescription = result.Action != null
+                ? GetHtmlTable(result.Action.ToString(), null, titleWithCounter, TitleStyle.ResultAction)
                 : GetHtmlTable(string.Empty, null, titleWithCounter, TitleStyle.Result);
 
             return $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
         }
 
-        public static string PrintAction<T>(this IDecisionAction<T> node, NodeId nodeId, string label)
+        public static string PrintAction<T>(this IDecisionAction<T> action, NodeId nodeId, string label)
         {
             var printResult = string.Empty;
 
-            var titleWithCounter = AddCounter(nodeId?.Counter, node.Title);
+            var titleWithCounter = AddCounter(nodeId?.Counter, action.Title);
 
             if (label != null)
                 printResult += $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}";
 
-            if (node.Path != null)
-                printResult += $"\"{titleWithCounter}\" -> {node.Path.InvokeChildPrint(nodeId, label)}";
+            if (action.Path != null)
+                printResult += $"\"{titleWithCounter}\" -> {action.Path.InvokeChildPrint(nodeId, label)}";
 
-            printResult += GetHtmlTable(node.Action.ToString(), null, titleWithCounter, TitleStyle.Action);
+            printResult += GetHtmlTable(action.Action.ToString(), null, titleWithCounter, TitleStyle.Action);
 
             return printResult;
         }

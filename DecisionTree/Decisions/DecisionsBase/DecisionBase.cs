@@ -3,7 +3,7 @@ using DecisionTree.Exceptions;
 
 namespace DecisionTree.Decisions.DecisionsBase
 {
-    public abstract class DecisionBase
+    public abstract class DecisionBase : ITitled
     {
         protected DecisionBase(string title)
         {

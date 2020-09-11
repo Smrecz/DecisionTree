@@ -4,7 +4,7 @@ namespace DecisionTree.Tests.Model
 {
     public class ItProject
     {
-        public ProjectType Type { get; set; }
+        public ProjectType? Type { get; set; }
         public bool IsOnHold { get; set; }
         public bool IsBudgetReviewed { get; set; }
         public int ItemsToDo { get; set; }

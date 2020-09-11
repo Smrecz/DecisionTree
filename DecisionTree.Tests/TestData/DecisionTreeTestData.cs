@@ -28,6 +28,12 @@ namespace DecisionTree.Tests.TestData
                         ItemsToDo = 5,
                         Type = ProjectType.Internal
                     }),
+                CreateTreeTestData("NullType",
+                    new ItProject
+                    {
+                        ItemsToDo = 5,
+                        Type = null
+                    }),
                 CreateTreeTestData("OneDayToDeadline",
                     new ItProject
                     {

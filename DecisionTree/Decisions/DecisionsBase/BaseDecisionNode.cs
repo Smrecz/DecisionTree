@@ -42,7 +42,12 @@ namespace DecisionTree.Decisions.DecisionsBase
 
         private bool TryPathEvaluate(T dto)
         {
-            if (!Paths.TryGetValue(_conditionCheck(dto), out var decision))
+            var result = _conditionCheck(dto);
+
+            if (result == null)
+                return false;
+
+            if (!Paths.TryGetValue(result, out var decision))
                 return false;
 
             decision.Evaluate(dto);

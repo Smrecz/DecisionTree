@@ -3,9 +3,8 @@ using System.Linq.Expressions;
 
 namespace DecisionTree.Decisions.DecisionsBase
 {
-    public interface IDecisionResult<T> : IDecision<T>
+    public interface IDecisionResult<T> : IDecision<T>, ITitled
     {
-        string Title { get; }
         Expression<Func<T, T>> Action { get; }
     }
 }

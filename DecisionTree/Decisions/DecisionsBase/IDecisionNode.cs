@@ -4,9 +4,8 @@ using System.Linq.Expressions;
 
 namespace DecisionTree.Decisions.DecisionsBase
 {
-    public interface IDecisionNode<T, TResult> : IDecision<T>
+    public interface IDecisionNode<T, TResult> : IDecision<T>, ITitled
     {
-        string Title { get; }
         IDecision<T> DefaultPath { get; }
         Dictionary<TResult, IDecision<T>> Paths { get; }
         Expression<Func<T, TResult>> Condition { get; }
