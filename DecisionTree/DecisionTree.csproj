@@ -14,8 +14,9 @@
     <Copyright>Piotr Smreczynski</Copyright>
     <Description>Decision Tree + Visualisation
 Lightweight framework to define decision trees via configuration with option to generate graph definition in DOT language.</Description>
-    <PackageReleaseNotes>Meaningful exception message added to Evaluate.</PackageReleaseNotes>
-    <Version>1.0.8</Version>
+    <PackageReleaseNotes>Full decision tree path included in exception message.
+Fixed nullable type evaluation error.</PackageReleaseNotes>
+    <Version>1.0.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
