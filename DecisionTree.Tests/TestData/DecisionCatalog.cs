@@ -25,10 +25,20 @@ namespace DecisionTree.Tests.TestData
                 .AddAction(boolDto => boolDto.SetResult(false))
                 .Build();
 
-        public static readonly IActionPath<BoolDto> SomeAction =
+        public static readonly IActionPath<BoolDto> SomeBoolAction =
             DecisionActionBuilder<BoolDto>.Create()
-                .AddTitle(nameof(SomeAction))
-                .AddAction(dto => dto.DoSomeAction());
+                .AddTitle(nameof(SomeBoolAction))
+                .AddAction(dto => (BoolDto)dto.DoSomeAction());
+
+        public static readonly IActionPath<IntDto> SomeIntAction =
+            DecisionActionBuilder<IntDto>.Create()
+                .AddTitle(nameof(SomeIntAction))
+                .AddAction(dto => (IntDto)dto.DoSomeAction());
+
+        public static readonly IActionPath<NullableIntDto> SomeNullableIntAction =
+            DecisionActionBuilder<NullableIntDto>.Create()
+                .AddTitle(nameof(SomeNullableIntAction))
+                .AddAction(dto => (NullableIntDto)dto.DoSomeAction());
 
         public static readonly IDecisionResult<IntDto> TwoResult =
             DecisionResultBuilder<IntDto>
@@ -42,6 +52,20 @@ namespace DecisionTree.Tests.TestData
                 .Create()
                 .AddTitle(nameof(OneResult))
                 .AddAction(boolDto => boolDto.SetResult(1))
+                .Build();
+
+        public static readonly IDecisionResult<NullableIntDto> TwoNullableResult =
+            DecisionResultBuilder<NullableIntDto>
+                .Create()
+                .AddTitle(nameof(TwoNullableResult))
+                .AddAction(boolDto => boolDto.SetResult(2))
+                .Build();
+
+        public static readonly IDecisionResult<NullableIntDto> NullNullableResult =
+            DecisionResultBuilder<NullableIntDto>
+                .Create()
+                .AddTitle(nameof(NullNullableResult))
+                .AddAction(boolDto => boolDto.SetResult(null))
                 .Build();
     }
 }

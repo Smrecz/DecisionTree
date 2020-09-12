@@ -14,12 +14,15 @@ namespace DecisionTree.Builders
         private readonly Dictionary<TResult, IDecision<T>> _paths = new Dictionary<TResult, IDecision<T>>();
         private Expression<Func<T, TResult>> _condition;
         private IDecision<T> _defaultDecision;
+        private IDecision<T> _nullDecision;
         private Expression<Func<T, T>> _action;
         private string _title;
 
         private DecisionNodeBuilder() { }
 
         public static INodeTitle<T, TResult> Create() => new DecisionNodeBuilder<T, TResult>();
+
+        private const string NullActionPathText = "#null";
 
         public INodeCondition<T, TResult> AddTitle(string title)
         {
@@ -41,6 +44,9 @@ namespace DecisionTree.Builders
 
         public INodeBuild<T, TResult> AddPath(TResult key, IDecision<T> path)
         {
+            if (TryAddNullPath(key, path))
+                return this;
+
             _paths.Add(key, path);
             return this;
         }
@@ -50,11 +56,28 @@ namespace DecisionTree.Builders
             var action = actionBeforePath.AddPath(path).Build();
 
             if (action is DecisionAction<T> decisionAction)
-                decisionAction.ChangeTitle($"{key} {_title} - {action.Title}");
+                decisionAction.ChangeTitle($"{GetKeyText(key)} {_title} - {action.Title}");
+
+            if (TryAddNullPath(key, action))
+                return this;
 
             _paths.Add(key, action);
 
             return this;
+        }
+
+        private static string GetKeyText(TResult key) => 
+            key == null 
+                ? NullActionPathText 
+                : key.ToString();
+
+        private bool TryAddNullPath(TResult key, IDecision<T> path)
+        {
+            if (key != null)
+                return false;
+
+            _nullDecision = path;
+            return true;
         }
 
         public INodeBuild<T, TResult> AddDefault(IDecision<T> defaultDecision)
@@ -66,9 +89,9 @@ namespace DecisionTree.Builders
         public IDecisionNode<T, TResult> Build()
         {
             if (_action == null)
-                return new DecisionNode<T, TResult>(_title, _condition, _paths, _defaultDecision);
+                return new DecisionNode<T, TResult>(_title, _condition, _paths, _defaultDecision, _nullDecision);
 
-            return new DecisionActionNode<T, TResult>(_title, _condition, _paths, _action, _defaultDecision);
+            return new DecisionActionNode<T, TResult>(_title, _condition, _paths, _action, _defaultDecision, _nullDecision);
         }
     }
 }

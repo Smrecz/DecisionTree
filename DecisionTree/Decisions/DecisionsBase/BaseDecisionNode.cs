@@ -8,11 +8,13 @@ namespace DecisionTree.Decisions.DecisionsBase
     public abstract class BaseDecisionNode<T, TResult> : BaseNode<T, TResult>
     {
         protected BaseDecisionNode(
-            string title, 
-            Expression<Func<T, TResult>> condition, 
-            Dictionary<TResult, IDecision<T>> paths, 
+            string title,
+            Expression<Func<T, TResult>> condition,
+            Dictionary<TResult, IDecision<T>> paths,
             IDecision<T> defaultPath = null,
-            Expression<Func<T, T>> action = null) : base(title, condition, paths, defaultPath, action)
+            IDecision<T> nullPath = null,
+            Expression<Func<T, T>> action = null) 
+            : base(title, condition, paths, defaultPath, nullPath, action)
         {
             _conditionCheck = condition.Compile();
         }
@@ -45,7 +47,13 @@ namespace DecisionTree.Decisions.DecisionsBase
             var result = _conditionCheck(dto);
 
             if (result == null)
-                return false;
+            {
+                if (NullPath == null)
+                    return false;
+
+                NullPath.Evaluate(dto);
+                return true;
+            }
 
             if (!Paths.TryGetValue(result, out var decision))
                 return false;

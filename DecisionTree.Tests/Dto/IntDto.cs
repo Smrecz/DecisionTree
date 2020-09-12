@@ -1,6 +1,6 @@
 ﻿namespace DecisionTree.Tests.Dto
 {
-    public class IntDto
+    public class IntDto : BaseTestDto
     {
         public IntDto(int value)
         {

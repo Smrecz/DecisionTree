@@ -1,6 +1,8 @@
 ﻿{
     "Project": {
-        "Type": 0,
+        "Type": null,
+        "SubType": 1,
+        "Area": null,
         "IsOnHold": true,
         "IsBudgetReviewed": true,
         "ItemsToDo": 15,

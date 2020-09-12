@@ -78,12 +78,12 @@ namespace DecisionTree.Tests
         public void DecisionTree_Should_Provide_Full_Path_On_Exception()
         {
             //Arrange
-            var dto = new ItProjectDecisionDtoWithError()
+            var dto = new ItProjectDecisionDtoWithError
             {
                 Project = new ItProject
                 {
                     ItemsToDo = 15,
-                    Type = ProjectType.Financial,
+                    Type = ProjectType.External,
                     TimeToDeadline = TimeSpan.FromDays(10),
                     BudgetRemaining = 1000
                 }

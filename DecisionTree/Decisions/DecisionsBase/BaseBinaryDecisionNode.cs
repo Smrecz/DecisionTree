@@ -10,7 +10,8 @@ namespace DecisionTree.Decisions.DecisionsBase
             string title,
             Expression<Func<T, bool>> condition,
             Dictionary<bool, IDecision<T>> paths,
-            Expression<Func<T, T>> action = null) : base(title, condition, paths, null, action)
+            Expression<Func<T, T>> action = null) 
+            : base(title, condition, paths, null, null, action)
         {
             _conditionCheck = condition.Compile();
 

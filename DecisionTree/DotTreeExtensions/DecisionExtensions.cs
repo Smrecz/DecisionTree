@@ -18,7 +18,8 @@ namespace DecisionTree.DotTreeExtensions
             {typeof(IDecisionAction<>), typeof(DecisionExtensions).GetMethod(nameof(PrintAction))}
         };
 
-        private const string DefaultOptionText = "#default_option";
+        private const string DefaultPathText = "#default_path";
+        private const string NullPathText = "#null_path";
         private const string ActionCellStyle = "align=\"left\"";
         private const string ActionPartRegexPattern = "(?=\\.[^\\)]+?\\([^\\)]+\\))";
         private const string FontStyle = "color=\"white\"";
@@ -65,8 +66,11 @@ namespace DecisionTree.DotTreeExtensions
             foreach (var (key, decision) in node.Paths)
                 printResult += $"\"{titleWithCounter}\" -> {decision.InvokeChildPrint(nodeId, key.ToString())}";
 
+            if (node.NullPath != null)
+                printResult += $"\"{titleWithCounter}\" -> {node.NullPath.InvokeChildPrint(nodeId, NullPathText)}";
+
             if (node.DefaultPath != null)
-                printResult += $"\"{titleWithCounter}\" -> {node.DefaultPath.InvokeChildPrint(nodeId, DefaultOptionText)}";
+                printResult += $"\"{titleWithCounter}\" -> {node.DefaultPath.InvokeChildPrint(nodeId, DefaultPathText)}";
 
             printResult += node.Action != null
                 ? GetHtmlTable(node.Action.ToString(), condition, titleWithCounter, TitleStyle.DecisionAction)

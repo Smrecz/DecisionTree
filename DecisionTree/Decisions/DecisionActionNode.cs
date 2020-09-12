@@ -12,7 +12,9 @@ namespace DecisionTree.Decisions
             Expression<Func<T, TResult>> condition,
             Dictionary<TResult, IDecision<T>> paths,
             Expression<Func<T, T>> action,
-            IDecision<T> defaultPath = null) : base(title, condition, paths, defaultPath, action)
+            IDecision<T> defaultPath = null,
+            IDecision<T> nullPath = null) 
+            : base(title, condition, paths, defaultPath, nullPath, action)
         {
             _actionFunc = action.Compile();
         }

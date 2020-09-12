@@ -1,5 +1,4 @@
-﻿using System;
-using DecisionTree.Decisions.DecisionsBase;
+﻿using DecisionTree.Decisions.DecisionsBase;
 
 namespace DecisionTree.Decisions
 {

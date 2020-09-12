@@ -22,7 +22,7 @@ namespace DecisionTree.Tests
             Project = new ItProject
             {
                 ItemsToDo = 15,
-                Type = ProjectType.Financial,
+                Type = ProjectType.External,
                 TimeToDeadline = TimeSpan.FromDays(10),
                 BudgetRemaining = 1000000
             }
@@ -33,7 +33,7 @@ namespace DecisionTree.Tests
             Project = new ItProject
             {
                 ItemsToDo = 15,
-                Type = ProjectType.Financial,
+                Type = ProjectType.External,
                 TimeToDeadline = TimeSpan.FromDays(10),
                 BudgetRemaining = 1000000
             }
@@ -46,7 +46,7 @@ namespace DecisionTree.Tests
             _testOutputHelper = testOutputHelper;
         }
 
-        [Fact(Skip="Use to get rough idea about DecisionTree performance against 'if' spam.")]
+        [Fact(Skip = "Use to get rough idea about DecisionTree performance against 'if' spam.")]
         public void Check_DecisionTree_Performance_Against_Pure_Conditions()
         {
             //Arrange
@@ -76,17 +76,14 @@ namespace DecisionTree.Tests
 
         private void PureConditionalCheck()
         {
-            if (_dtoInstance2.Project.ItemsToDo != 0)
-            {
+            if (_dtoInstance2.Project.ItemsToDo == 0) return;
                 _dtoInstance2.SetSendNotification(true);
-
-                if (_dtoInstance2.Project.IsOnHold == false)
-                    if (_dtoInstance2.Project.Type == ProjectType.Financial)
-                        if (_dtoInstance2.Project.ItemsToDo > 10)
-                            if (_dtoInstance2.Project.TimeToDeadline.Days >= 7)
-                                if (_dtoInstance2.Project.BudgetRemaining >= _dtoInstance2.Project.ItemsToDo * 1000)
-                                    _dtoInstance2.SetIsBudgetReviewed(true);
-            }
+            if (_dtoInstance2.Project.IsOnHold) return;
+            if (_dtoInstance2.Project.Type != ProjectType.External) return;
+            if (_dtoInstance2.Project.ItemsToDo <= 10) return;
+            if (_dtoInstance2.Project.TimeToDeadline.Days < 7) return;
+            if (_dtoInstance2.Project.BudgetRemaining >= _dtoInstance2.Project.ItemsToDo * 1000)
+                _dtoInstance2.SetIsBudgetReviewed(true);
         }
 
         private static double RunInTimedLoop(int count, int times, Action action)

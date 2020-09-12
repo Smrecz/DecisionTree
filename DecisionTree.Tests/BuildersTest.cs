@@ -78,7 +78,7 @@ namespace DecisionTree.Tests
             var decisionNode = DecisionNodeBuilder<BoolDto, bool>.Create()
                 .AddTitle("Title")
                 .AddCondition(boolDto => boolDto.BoolProperty)
-                .AddPath(true, DecisionCatalog.TrueResult, DecisionCatalog.SomeAction)
+                .AddPath(true, DecisionCatalog.TrueResult, DecisionCatalog.SomeBoolAction)
                 .AddPath(false, DecisionCatalog.FalseResult)
                 .Build();
 
@@ -105,7 +105,7 @@ namespace DecisionTree.Tests
                 .AddCondition(boolDto => boolDto.BoolProperty)
                 .AddPath(true, DecisionCatalog.TrueResult)
                 .AddPath(false, DecisionCatalog.FalseResult)
-                .AddAction(boolDto => boolDto.DoSomeAction())
+                .AddAction(boolDto => (BoolDto)boolDto.DoSomeAction())
                 .Build();
 
             //Act
@@ -175,7 +175,7 @@ namespace DecisionTree.Tests
             var decisionNode = BinaryDecisionNodeBuilder<BoolDto>.Create()
                 .AddTitle("Title")
                 .AddCondition(boolDto => boolDto.BoolProperty)
-                .AddPositivePath(DecisionCatalog.TrueResult, DecisionCatalog.SomeAction)
+                .AddPositivePath(DecisionCatalog.TrueResult, DecisionCatalog.SomeBoolAction)
                 .AddNegativePath(DecisionCatalog.FalseResult)
                 .Build();
 
@@ -202,7 +202,7 @@ namespace DecisionTree.Tests
                 .AddCondition(boolDto => boolDto.BoolProperty)
                 .AddPositivePath(DecisionCatalog.TrueResult)
                 .AddNegativePath(DecisionCatalog.FalseResult)
-                .AddAction(boolDto => boolDto.DoSomeAction())
+                .AddAction(boolDto => (BoolDto)boolDto.DoSomeAction())
                 .Build();
 
             //Act

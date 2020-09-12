@@ -38,21 +38,27 @@ namespace DecisionTree.Tests.TestData
                     new ItProject
                     {
                         ItemsToDo = 15,
-                        Type = ProjectType.Financial,
+                        Type = ProjectType.External,
+                        SubType = ProjectSubType.WordWide,
+                        Area = ProjectArea.Industry,
                         TimeToDeadline = TimeSpan.FromDays(1)
                     }),
                 CreateTreeTestData("LowBudget",
                     new ItProject
                     {
                         ItemsToDo = 5,
-                        Type = ProjectType.Financial,
+                        Type = ProjectType.External,
+                        SubType = ProjectSubType.WordWide,
+                        Area = ProjectArea.Industry,
                         BudgetRemaining = 1000
                     }),
                 CreateTreeTestData("ToMuchToDo",
                     new ItProject
                     {
                         ItemsToDo = 15,
-                        Type = ProjectType.Financial,
+                        Type = null,
+                        SubType = ProjectSubType.Local,
+                        Area = null,
                         TimeToDeadline = TimeSpan.FromDays(10),
                         BudgetRemaining = 1000
                     }),
@@ -60,7 +66,9 @@ namespace DecisionTree.Tests.TestData
                     new ItProject
                     {
                         ItemsToDo = 15,
-                        Type = ProjectType.Financial,
+                        Type = ProjectType.External,
+                        SubType = ProjectSubType.WordWide,
+                        Area = ProjectArea.Industry,
                         TimeToDeadline = TimeSpan.FromDays(10),
                         BudgetRemaining = 1000000
                     })
@@ -85,7 +93,7 @@ namespace DecisionTree.Tests.TestData
             $"^-- 'ProjectTypeDecision'{Environment.NewLine}" +
             $"^-- 'IsOnHoldDecision'{Environment.NewLine}" +
             $"^-- 'False FinishedDecision - SendNotificationAction'{Environment.NewLine}" +
-            $"^-- 'FinishedDecision'";
+            "^-- 'FinishedDecision'";
 
         private static object[] GraphTestData(string title, bool isHorizontal, bool hasUniquePaths) =>
             new object[] { title, new GraphOptions

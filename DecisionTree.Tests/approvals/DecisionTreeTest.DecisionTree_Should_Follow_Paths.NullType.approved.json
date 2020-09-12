@@ -1,9 +1,11 @@
 ﻿{
     "Project": {
         "Type": null,
-        "IsOnHold": true,
-        "IsBudgetReviewed": true,
-        "ItemsToDo": 5,
+        "SubType": null,
+        "Area": null,
+        "IsOnHold": false,
+        "IsBudgetReviewed": false,
+        "ItemsToDo": 0,
         "BudgetRemaining": 0,
         "TimeToDeadline": {
             "Ticks": 0,
@@ -20,5 +22,5 @@
         },
         "SendNotification": true
     },
-    "Result": "Not enough funds."
+    "Result": null
 }

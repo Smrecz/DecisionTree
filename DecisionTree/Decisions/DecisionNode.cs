@@ -11,7 +11,9 @@ namespace DecisionTree.Decisions
             string title,
             Expression<Func<T, TResult>> condition,
             Dictionary<TResult, IDecision<T>> paths,
-            IDecision<T> defaultPath = null) : base(title, condition, paths, defaultPath)
+            IDecision<T> defaultPath = null,
+            IDecision<T> nullPath = null) 
+            : base(title, condition, paths, defaultPath, nullPath)
         {
         }
 

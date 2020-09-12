@@ -63,20 +63,39 @@ namespace DecisionTree.Tests.Tree
                 .AddNegativePath(BudgetDecision)
                 .Build();
 
-        private static readonly IDecision<ItProjectDecisionDto> ResetInternalAction =
+        private static readonly IDecision<ItProjectDecisionDto> ResetProjectAction =
             GetActionBuilder()
-                .AddTitle(nameof(ResetInternalAction))
+                .AddTitle(nameof(ResetProjectAction))
                 .AddAction(dto => dto
                     .SetItemsToDo(0)
                     .SetBudgetRemaining(0))
                 .AddPath(DoNothingResult)
                 .Build();
 
+        private static readonly IDecision<ItProjectDecisionDto> ProjectAreaDecision =
+            GetNodeBuilder<ProjectArea?>()
+                .AddTitle(nameof(ProjectAreaDecision))
+                .AddCondition(dto => dto.Project.Area)
+                .AddPath(ProjectArea.Hr, ResetProjectAction, SendNotificationAction)
+                .AddDefault(ToDoDecision)
+                .Build();
+
+        private static readonly IDecision<ItProjectDecisionDto> ProjectSubTypeDecision =
+            GetNodeBuilder<ProjectSubType?>()
+                .AddTitle(nameof(ProjectSubTypeDecision))
+                .AddCondition(dto => dto.Project.SubType)
+                .AddPath(ProjectSubType.WordWide, ToDoDecision)
+                .AddPath(ProjectSubType.Foreign, ToDoDecision)
+                .AddPath(null, ResetProjectAction, SendNotificationAction)
+                .AddDefault(ProjectAreaDecision)
+                .Build();
+
         private static readonly IDecision<ItProjectDecisionDto> ProjectTypeDecision =
             GetNodeBuilder<ProjectType?>()
                 .AddTitle(nameof(ProjectTypeDecision))
                 .AddCondition(dto => dto.Project.Type)
-                .AddPath(ProjectType.Internal, ResetInternalAction, SendNotificationAction)
+                .AddPath(ProjectType.Internal, ResetProjectAction, SendNotificationAction)
+                .AddPath(null, ProjectSubTypeDecision)
                 .AddDefault(ToDoDecision)
                 .Build();
 

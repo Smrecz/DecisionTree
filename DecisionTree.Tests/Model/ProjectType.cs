@@ -2,7 +2,7 @@
 {
     public enum ProjectType
     {
-        Financial,
+        External,
         Internal
     }
 }
