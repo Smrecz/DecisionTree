@@ -77,10 +77,14 @@ namespace DecisionTree.Tests.TestData
         public static IEnumerable<object[]> GraphTestDataList =>
             new List<object[]>
             {
-                GraphTestData("Default", false, false ),
-                GraphTestData("Horizontal", true, false ),
+                GraphTestData("Default" ),
+                GraphTestData("Horizontal", true ),
                 GraphTestData("UniquePaths", false, true ),
-                GraphTestData("HorizontalUniquePaths", true, true )
+                GraphTestData("HorizontalUniquePaths", true, true ),
+                GraphTestData("TitleOnlyDefault", false, false, true ),
+                GraphTestData("TitleOnlyHorizontal", true, false, true ),
+                GraphTestData("TitleOnlyUniquePaths", false, true, true ),
+                GraphTestData("TitleOnlyHorizontalUniquePaths", true, true, true )
             };
 
         public static string ExpectedExceptionMessageWithPath =>
@@ -95,11 +99,12 @@ namespace DecisionTree.Tests.TestData
             $"^-- 'False FinishedDecision - SendNotificationAction'{Environment.NewLine}" +
             "^-- 'FinishedDecision'";
 
-        private static object[] GraphTestData(string title, bool isHorizontal, bool hasUniquePaths) =>
+        private static object[] GraphTestData(string title, bool isHorizontal = false, bool hasUniquePaths = false, bool titleOnly = false) =>
             new object[] { title, new GraphOptions
                 {
                     IsHorizontal = isHorizontal,
-                    UseUniquePaths = hasUniquePaths
+                    UseUniquePaths = hasUniquePaths,
+                    TitleOnly = titleOnly
                 }
             };
 

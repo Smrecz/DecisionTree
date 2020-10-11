@@ -15,7 +15,7 @@ namespace DecisionTree.DotTreeExtensions
 
             var graphDefinition = $"digraph G {{{newLine}" +
                                   $"{(options.IsHorizontal ? $"rankdir = LR;{newLine}" : string.Empty)}" +
-                                  $"{decisionTree.GetTrunk().Print(options.UseUniquePaths)}" +
+                                  $"{decisionTree.GetTrunk().Print(options)}" +
                                   "}";
 
             var deduplicatePaths = graphDefinition.Split(newLine).Distinct();
