@@ -10,7 +10,8 @@ namespace DecisionTree.Decisions
         internal BinaryDecisionNode(
             string title, 
             Expression<Func<T, bool>> condition, 
-            Dictionary<bool, IDecision<T>> paths) : base(title, condition, paths)
+            Dictionary<bool, IDecision<T>> paths) 
+            : base(title, condition, paths)
         {
         }
 

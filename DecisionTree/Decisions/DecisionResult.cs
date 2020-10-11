@@ -4,7 +4,8 @@ namespace DecisionTree.Decisions
 {
     public class DecisionResult<T> : BaseDecisionResult<T>
     {
-        internal DecisionResult(string title) : base(title)
+        internal DecisionResult(string title) 
+            : base(title)
         {
         }
     }

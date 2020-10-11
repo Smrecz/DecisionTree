@@ -11,7 +11,8 @@ namespace DecisionTree.Decisions
             string title, 
             Expression<Func<T, bool>> condition, 
             Dictionary<bool, IDecision<T>> paths, 
-            Expression<Func<T, T>> action) : base(title, condition, paths, action)
+            Expression<Func<T, T>> action) 
+            : base(title, condition, paths, action)
         {
             _actionFunc = action.Compile();
         }

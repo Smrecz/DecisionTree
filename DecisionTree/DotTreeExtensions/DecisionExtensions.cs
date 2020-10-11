@@ -70,7 +70,7 @@ namespace DecisionTree.DotTreeExtensions
                 .GetInterfaces()
                 .Where(type => type.IsGenericType)
                 .FirstOrDefault(type => ExtensionBindingDictionary.Keys.Contains(type.GetGenericTypeDefinition()))
-            ?? throw new NotPrintableTypeException($"Printing of type {decision.GetType().Name} not supported.");
+            ?? throw new NotPrintableTypeException(decision.GetType());
 
         private static string PrintNode<T, TResult>(this IDecisionNode<T, TResult> node, GraphConfig graphConfig, string label = null)
         {
@@ -173,22 +173,22 @@ namespace DecisionTree.DotTreeExtensions
             GetTableBody(title, null, null, style);
 
         private static string GetTableBody(string title, string conditionRow, string actionPartRow, string style) =>
-        $"<<table {GetTableStyle(style)}>" +
-             "<tr>" +
-                 $"<td {GetTitleCellStyle(style)}>" +
-                     $"<font {FontStyle}>{HttpUtility.HtmlEncode(title)}</font>" +
-                 "</td>" +
-             "</tr>" +
-             conditionRow +
-             actionPartRow +
-        "</table>>";
+            $"<<table {GetTableStyle(style)}>" +
+                 "<tr>" +
+                     $"<td {GetTitleCellStyle(style)}>" +
+                         $"<font {FontStyle}>{HttpUtility.HtmlEncode(title)}</font>" +
+                     "</td>" +
+                 "</tr>" +
+                 conditionRow +
+                 actionPartRow +
+            "</table>>";
 
         private static string GetConditionRow(string condition) =>
-        "<tr>" +
-            $"<td {ActionCellStyle}>" +
-                $"<font {FontStyle}>{HttpUtility.HtmlEncode(condition)}</font>" +
-            "</td>" +
-        "</tr>";
+            "<tr>" +
+                $"<td {ActionCellStyle}>" +
+                    $"<font {FontStyle}>{HttpUtility.HtmlEncode(condition)}</font>" +
+                "</td>" +
+            "</tr>";
 
         private static string GetActionPartRow(string actionPart) =>
             "<tr>" +

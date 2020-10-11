@@ -89,8 +89,6 @@ namespace DecisionTree.Tests
                 }
             };
 
-
-
             var tree = new ProjectDecisionTree();
 
             //Act

@@ -30,7 +30,7 @@ namespace DecisionTree.Decisions.DecisionsBase
                 return;
 
             var result = _conditionCheck(dto);
-            throw new MissingDecisionPathException($"Decision path not defined for result: {result}");
+            throw new MissingDecisionPathException(result.ToString());
         }
 
         private bool TryDefaultEvaluate(T dto)

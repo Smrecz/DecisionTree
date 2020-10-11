@@ -8,7 +8,8 @@ namespace DecisionTree.Decisions
     {
         internal DecisionAction(string title, 
             Expression<Func<T, T>> action, 
-            IDecision<T> path) : base(title, action, path)
+            IDecision<T> path) 
+            : base(title, action, path)
         {
         }
 

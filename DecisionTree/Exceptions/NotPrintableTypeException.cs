@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Reflection;
 
 namespace DecisionTree.Exceptions
 {
     public class NotPrintableTypeException : Exception
     {
-        public NotPrintableTypeException(string message) : base(message) { }
+        public NotPrintableTypeException(MemberInfo type) 
+            : base($"Printing of type {type.Name} not supported.") { }
     }
 }

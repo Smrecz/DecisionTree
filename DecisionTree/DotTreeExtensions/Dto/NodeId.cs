@@ -1,6 +1,6 @@
 ﻿namespace DecisionTree.DotTreeExtensions.Dto
 {
-    public class NodeId
+    internal class NodeId
     {
         public int Counter { get; private set; }
 

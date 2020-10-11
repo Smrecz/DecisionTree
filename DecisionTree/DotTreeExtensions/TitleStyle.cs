@@ -1,6 +1,6 @@
 ﻿namespace DecisionTree.DotTreeExtensions
 {
-    public enum TitleStyle
+    internal enum TitleStyle
     {
         Decision,
         DecisionAction,
