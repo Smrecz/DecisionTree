@@ -14,8 +14,8 @@
     <Copyright>Piotr Smreczynski</Copyright>
     <Description>Decision Tree + Visualisation
 Lightweight framework to define decision trees via configuration with option to generate graph definition in DOT language.</Description>
-    <PackageReleaseNotes>Nullable type decisions can now have null as valid path key.</PackageReleaseNotes>
-    <Version>1.1.0</Version>
+    <PackageReleaseNotes>Added option to generate graph definition with only Titles and Paths</PackageReleaseNotes>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
