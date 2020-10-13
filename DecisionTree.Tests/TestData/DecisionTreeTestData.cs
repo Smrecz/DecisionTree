@@ -84,7 +84,28 @@ namespace DecisionTree.Tests.TestData
                 GraphTestData("TitleOnlyDefault", false, false, true ),
                 GraphTestData("TitleOnlyHorizontal", true, false, true ),
                 GraphTestData("TitleOnlyUniquePaths", false, true, true ),
-                GraphTestData("TitleOnlyHorizontalUniquePaths", true, true, true )
+                GraphTestData("TitleOnlyHorizontalUniquePaths", true, true, true ),
+                GraphTestData("CustomColorsDefault", 
+                    graphStyle: new GraphStyle
+                    {
+                        DecisionColor = "white",
+                        DecisionActionColor = "#FFFF00",
+                        ResultColor = "#FF00FF",
+                        ResultActionColor = "#00FFFF",
+                        ActionColor = "black"
+                    }),
+                GraphTestData("PartialCustomColorsDefault",
+                    graphStyle: new GraphStyle
+                    {
+                        DecisionColor = "#FFFFFF",
+                        ResultColor = "#FF00FF",
+                        ActionColor = "#000000"
+                    }),
+                GraphTestData("FontDefault",
+                    graphStyle: new GraphStyle
+                    {
+                        FontColor = "red"
+                    })
             };
 
         public static string ExpectedExceptionMessageWithPath =>
@@ -99,12 +120,18 @@ namespace DecisionTree.Tests.TestData
             $"^-- 'False FinishedDecision - SendNotificationAction'{Environment.NewLine}" +
             "^-- 'FinishedDecision'";
 
-        private static object[] GraphTestData(string title, bool isHorizontal = false, bool hasUniquePaths = false, bool titleOnly = false) =>
+        private static object[] GraphTestData(
+            string title, 
+            bool isHorizontal = false, 
+            bool hasUniquePaths = false, 
+            bool titleOnly = false,
+            GraphStyle graphStyle = null) =>
             new object[] { title, new GraphOptions
                 {
                     IsHorizontal = isHorizontal,
                     UseUniquePaths = hasUniquePaths,
-                    TitleOnly = titleOnly
+                    TitleOnly = titleOnly,
+                    GraphStyle = graphStyle
                 }
             };
 

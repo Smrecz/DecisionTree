@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Web;
 using DecisionTree.Decisions.DecisionsBase;
 using DecisionTree.DotTreeExtensions.Dto;
 using DecisionTree.Exceptions;
@@ -12,6 +11,10 @@ namespace DecisionTree.DotTreeExtensions
 {
     public static class DecisionExtensions
     {
+        private const string DefaultPathText = "#default_path";
+        private const string NullPathText = "#null_path";
+        private const string ActionPartRegexPattern = "(?=\\.[^\\)]+?\\([^\\)]+\\))";
+
         private static readonly Dictionary<Type, MethodInfo> ExtensionBindingDictionary =
             new Dictionary<Type, MethodInfo>
             {
@@ -20,44 +23,22 @@ namespace DecisionTree.DotTreeExtensions
                 {typeof(IDecisionAction<>), GetPrivateStaticMethodInfo(nameof(PrintAction))}
             };
 
+        public static string Print<T>(this IDecision<T> decision, GraphOptions options) => 
+            decision.InvokeChildPrint(new GraphConfig(options));
+
         private static MethodInfo GetPrivateStaticMethodInfo(string name) => typeof(DecisionExtensions)
             .GetMethod(name, BindingFlags.NonPublic | BindingFlags.Static);
-
-        private static readonly Dictionary<TitleStyle, string> TitleStyleDictionary = 
-            new Dictionary<TitleStyle, string>
-            {
-                {TitleStyle.Decision, "#17a2b8"},
-                {TitleStyle.DecisionAction, "#007bff"},
-                {TitleStyle.Result, "#343a40"},
-                {TitleStyle.ResultAction, "#28a745"},
-                {TitleStyle.Action, "#6c757d"}
-            };
-
-        private const string DefaultPathText = "#default_path";
-        private const string NullPathText = "#null_path";
-        private const string ActionCellStyle = "align=\"left\"";
-        private const string ActionPartRegexPattern = "(?=\\.[^\\)]+?\\([^\\)]+\\))";
-        private const string FontStyle = "color=\"white\"";
-        private const string Separator = "<tr><td bgcolor=\"white\" cellpadding=\"1\"></td></tr>";
-
-        public static string Print<T>(this IDecision<T> decision, GraphOptions options)
-        {
-            var nodeId = options.UseUniquePaths ? new NodeId() : null;
-            var graphConfig = new GraphConfig(nodeId, options.TitleOnly);
-
-            return decision.InvokeChildPrint(graphConfig);
-        }
 
         private static string InvokeChildPrint<T>(this IDecision<T> decision, GraphConfig graphConfig) =>
             InvokeChildPrint(decision, graphConfig, null);
 
-        private static string InvokeChildPrint<T>(this IDecision<T> decision, GraphConfig graphConfig, string key)
+        private static string InvokeChildPrint<T>(this IDecision<T> decision, GraphConfig graphConfig, string label)
         {
             var implementedInterface = GetImplementedPrintableInterface(decision);
 
             graphConfig.NodeId?.Increment();
 
-            var printParams = new object[] { decision, graphConfig, key };
+            var printParams = new object[] { decision, graphConfig, label };
 
             return (string)ExtensionBindingDictionary[implementedInterface.GetGenericTypeDefinition()]
                 .MakeGenericMethod(implementedInterface.GenericTypeArguments)
@@ -80,20 +61,24 @@ namespace DecisionTree.DotTreeExtensions
             var titleWithCounter = AddCounter(graphConfig.NodeId?.Counter, node.Title);
 
             if (label != null)
-                printResult += $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}";
+                printResult += DotFormattingHelper
+                    .GetLabel(titleWithCounter, label);
 
             foreach (var (key, decision) in node.Paths)
-                printResult += $"\"{titleWithCounter}\" -> {decision.InvokeChildPrint(graphConfig, key.ToString())}";
+                printResult += DotFormattingHelper
+                    .GetPath(titleWithCounter, decision.InvokeChildPrint(graphConfig, key.ToString()));
 
             if (node.NullPath != null)
-                printResult += $"\"{titleWithCounter}\" -> {node.NullPath.InvokeChildPrint(graphConfig, NullPathText)}";
+                printResult += DotFormattingHelper
+                    .GetPath(titleWithCounter, node.NullPath.InvokeChildPrint(graphConfig, NullPathText));
 
             if (node.DefaultPath != null)
-                printResult += $"\"{titleWithCounter}\" -> {node.DefaultPath.InvokeChildPrint(graphConfig, DefaultPathText)}";
+                printResult += DotFormattingHelper
+                    .GetPath(titleWithCounter, node.DefaultPath.InvokeChildPrint(graphConfig, DefaultPathText));
 
             printResult += node.Action != null
-                ? GetHtmlTable(node.Action.ToString(), graphConfig.TitleOnly, condition, titleWithCounter, TitleStyle.DecisionAction)
-                : GetHtmlTable(string.Empty, graphConfig.TitleOnly, condition, titleWithCounter, TitleStyle.Decision);
+                ? GetHtmlTable(node.Action.ToString(), graphConfig, condition, titleWithCounter, StyleElement.DecisionAction)
+                : GetHtmlTable(string.Empty, graphConfig, condition, titleWithCounter, StyleElement.Decision);
 
             return printResult;
         }
@@ -103,10 +88,11 @@ namespace DecisionTree.DotTreeExtensions
             var titleWithCounter = AddCounter(graphConfig.NodeId?.Counter, result.Title);
 
             var actionDescription = result.Action != null
-                ? GetHtmlTable(result.Action.ToString(), graphConfig.TitleOnly, titleWithCounter, TitleStyle.ResultAction)
-                : GetHtmlTable(string.Empty, graphConfig.TitleOnly, titleWithCounter, TitleStyle.Result);
+                ? GetHtmlTable(result.Action.ToString(), graphConfig, titleWithCounter, StyleElement.ResultAction)
+                : GetHtmlTable(string.Empty, graphConfig, titleWithCounter, StyleElement.Result);
 
-            return $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}{actionDescription}";
+            return DotFormattingHelper
+                .GetLabel(titleWithCounter, label, actionDescription);
         }
 
         private static string PrintAction<T>(this IDecisionAction<T> action, GraphConfig graphConfig, string label)
@@ -116,35 +102,54 @@ namespace DecisionTree.DotTreeExtensions
             var titleWithCounter = AddCounter(graphConfig.NodeId?.Counter, action.Title);
 
             if (label != null)
-                printResult += $"\"{titleWithCounter}\" [label = \"{label}\"]{Environment.NewLine}";
+                printResult += DotFormattingHelper
+                    .GetLabel(titleWithCounter, label);
 
             if (action.Path != null)
-                printResult += $"\"{titleWithCounter}\" -> {action.Path.InvokeChildPrint(graphConfig, label)}";
+                printResult += DotFormattingHelper
+                    .GetPath(titleWithCounter, action.Path.InvokeChildPrint(graphConfig, label));
 
-            printResult += GetHtmlTable(action.Action.ToString(), graphConfig.TitleOnly, titleWithCounter, TitleStyle.Action);
+            printResult += GetHtmlTable(action.Action.ToString(), graphConfig, titleWithCounter, StyleElement.Action);
 
             return printResult;
         }
 
-        private static string GetHtmlTable(string action, bool titleOnly, string title, TitleStyle titleStyle) =>
-            GetHtmlTable(action, titleOnly, null, title, titleStyle);
+        private static string GetHtmlTable(string action, GraphConfig graphConfig, string title, StyleElement styleElement) =>
+            GetHtmlTable(action, graphConfig, null, title, styleElement);
 
-        private static string GetHtmlTable(string action, bool titleOnly, string condition, string title, TitleStyle titleStyle)
+        private static string GetHtmlTable(string action, GraphConfig graphConfig, string condition, string title, StyleElement styleElement)
         {
-            var style = TitleStyleDictionary[titleStyle];
-            var actionStyle = GetActionStyle(style);
+            var color = graphConfig.GetColor(styleElement);
+            var fontColor = graphConfig.GetColor(StyleElement.Font);
 
-            if (titleOnly)
-                return $"\"{title}\" [{actionStyle} label = {GetTableBody(title, style)}]{Environment.NewLine}";
+            if (graphConfig.TitleOnly)
+                return DotFormattingHelper.GetTableBody(title, color, fontColor);
 
-            var actionPartRow = string.Empty;
+            var conditionRow = GetConditionRow(condition, fontColor);
+            var actionPartRow = GetActionPartRow(action, fontColor);
+
+            return DotFormattingHelper.GetTableBody(title, conditionRow, actionPartRow, color, fontColor);
+        }
+
+        private static string GetConditionRow(string condition, string fontColor)
+        {
             var conditionRow = string.Empty;
 
-            if (condition != null)
-            {
-                conditionRow += Separator;
-                conditionRow += GetConditionRow(condition);
-            }
+            if (condition == null) 
+                return conditionRow;
+
+            conditionRow += DotFormattingHelper
+                .GetSeparator(fontColor);
+
+            conditionRow += DotFormattingHelper
+                .GetConditionRow(condition, fontColor);
+
+            return conditionRow;
+        }
+
+        private static string GetActionPartRow(string action, string fontColor)
+        {
+            var actionPartRow = string.Empty;
 
             var actionParts = Regex
                 .Split(action, ActionPartRegexPattern)
@@ -152,58 +157,19 @@ namespace DecisionTree.DotTreeExtensions
                 .ToList();
 
             if (actionParts.Any())
-                actionPartRow += Separator;
+                actionPartRow += DotFormattingHelper
+                    .GetSeparator(fontColor);
 
             foreach (var actionPart in actionParts)
-                actionPartRow += GetActionPartRow(actionPart);
+                actionPartRow += DotFormattingHelper
+                    .GetActionPartRow(actionPart, fontColor);
 
-            var table = GetTableBody(title, conditionRow, actionPartRow, style);
-
-            return $"\"{title}\" [{actionStyle} label = {table}]{Environment.NewLine}";
+            return actionPartRow;
         }
 
-        private static string AddCounter(int? counter, string title)
-        {
-            return counter != null
-                ? $"[{counter}] {title}"
+        private static string AddCounter(int? counter, string title) =>
+            counter != null
+                ? DotFormattingHelper.GetTitleWithCounter(counter, title)
                 : title;
-        }
-
-        private static string GetTableBody(string title, string style) =>
-            GetTableBody(title, null, null, style);
-
-        private static string GetTableBody(string title, string conditionRow, string actionPartRow, string style) =>
-            $"<<table {GetTableStyle(style)}>" +
-                 "<tr>" +
-                     $"<td {GetTitleCellStyle(style)}>" +
-                         $"<font {FontStyle}>{HttpUtility.HtmlEncode(title)}</font>" +
-                     "</td>" +
-                 "</tr>" +
-                 conditionRow +
-                 actionPartRow +
-            "</table>>";
-
-        private static string GetConditionRow(string condition) =>
-            "<tr>" +
-                $"<td {ActionCellStyle}>" +
-                    $"<font {FontStyle}>{HttpUtility.HtmlEncode(condition)}</font>" +
-                "</td>" +
-            "</tr>";
-
-        private static string GetActionPartRow(string actionPart) =>
-            "<tr>" +
-                $"<td {ActionCellStyle}>" +
-                    $"<font {FontStyle}>{HttpUtility.HtmlEncode(actionPart)}</font>" +
-                "</td>" +
-            "</tr>";
-
-        private static string GetTitleCellStyle(string style) =>
-            $"bgcolor=\"{style}\" align=\"center\"";
-
-        private static string GetTableStyle(string style) =>
-            $"border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"{style}\"";
-
-        private static string GetActionStyle(string style) =>
-            $"style = \"filled\" penwidth = 1 fillcolor = \"{style}\" fontname = \"Courier New\" shape = \"Mrecord\"";
     }
 }

@@ -14,5 +14,9 @@
         /// Will generate graph definition with only titles and paths.
         /// </summary>
         public bool TitleOnly { get; set; }
+        /// <summary>
+        /// Custom graph style configuration. Will override default styling where provided.
+        /// </summary>
+        public GraphStyle GraphStyle { get; set; }
     }
 }

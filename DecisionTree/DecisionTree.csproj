@@ -14,8 +14,8 @@
     <Copyright>Piotr Smreczynski</Copyright>
     <Description>Decision Tree + Visualisation
 Lightweight framework to define decision trees via configuration with option to generate graph definition in DOT language.</Description>
-    <PackageReleaseNotes>Added option to generate graph definition with only Titles and Paths</PackageReleaseNotes>
-    <Version>1.1.1</Version>
+    <PackageReleaseNotes>Added custom graph styling options via GraphOptions.GraphStyle .</PackageReleaseNotes>
+    <Version>1.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

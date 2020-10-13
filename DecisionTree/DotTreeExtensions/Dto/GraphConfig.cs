@@ -2,13 +2,15 @@
 {
     internal class GraphConfig
     {
-        public GraphConfig(NodeId nodeId, bool titleOnly)
+        public GraphConfig(GraphOptions options)
         {
-            NodeId = nodeId;
-            TitleOnly = titleOnly;
+            NodeId = options.UseUniquePaths ? new NodeId() : null;
+            TitleOnly = options.TitleOnly;
+            Style = options.GraphStyle ?? new GraphStyle();
         }
 
         public NodeId NodeId { get; }
         public bool TitleOnly { get; }
+        public GraphStyle Style { get; }
     }
 }
